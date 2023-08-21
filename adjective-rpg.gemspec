@@ -4,20 +4,20 @@ require_relative "lib/adjective/rpg/version"
 
 Gem::Specification.new do |spec|
   spec.name = "adjective-rpg"
-  spec.version = Adjective::Rpg::VERSION
+  spec.version = Adjective::VERSION
   spec.authors = ["Kevin Maze"]
   spec.email = ["rhoxiodbc@gmail.com"]
 
-  spec.summary = "TODO: Write a short summary, because RubyGems requires one."
-  spec.description = "TODO: Write a longer description or delete this line."
-  spec.homepage = "TODO: Put your gem's website or public repo URL here."
+  spec.summary = "Write a short summary, because RubyGems requires one."
+  spec.description = "Write a longer description or delete this line."
+  spec.homepage = "https://www.google.com"
   spec.required_ruby_version = ">= 2.6.0"
 
   spec.metadata["allowed_push_host"] = "TODO: Set to your gem server 'https://example.com'"
 
   spec.metadata["homepage_uri"] = spec.homepage
-  spec.metadata["source_code_uri"] = "TODO: Put your gem's public repo URL here."
-  spec.metadata["changelog_uri"] = "TODO: Put your gem's CHANGELOG.md URL here."
+  spec.metadata["source_code_uri"] = "https://github.com/Rhoxio/adjective-rpg"
+  spec.metadata["changelog_uri"] = "https://github.com/Rhoxio/adjective-rpg/CHANGELOG.md"
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
