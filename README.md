@@ -1,4 +1,4 @@
-# Adjective::Rpg
+# Adjective
 
 TODO: Delete this and the text below, and describe your gem
 
@@ -29,3 +29,5 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/adjective-rpg.
+
+## Integration Planning
