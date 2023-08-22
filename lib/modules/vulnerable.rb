@@ -13,7 +13,7 @@ module Adjective
     # write the other logic
 
     def init_vulnerable(args = {})
-      define_vulnerable_instance_variables(vulnerable_default_data)
+      define_vulnerable_instance_variables(vgiulnerable_default_data)
       # validate_vulnerable_attributes(args)
     end
 
