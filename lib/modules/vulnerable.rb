@@ -5,15 +5,14 @@ module Adjective
 
     # TODO: 
 
-    # Expose block scope in init_vulnerable
-
     # dont validate attrs - select valid ones, makes it more flexible. can pass
     # full attr objects through this way when setting up a model.
 
     # write the other logic
 
-    def init_vulnerable(args = {})
-      define_vulnerable_instance_variables(vgiulnerable_default_data)
+    def init_vulnerable(args = {}, &block)
+      define_vulnerable_instance_variables(vulnerable_default_data)
+      yield(self) if block_given?
       # validate_vulnerable_attributes(args)
     end
 

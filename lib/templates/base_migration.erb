@@ -1,0 +1,12 @@
+class <%=migration_class%> < ActiveRecord::Migration[<%= version -%>]
+  def change
+<% @table_definitions.each do |table| -%>
+    create_table :<%= table[:table_name] -%> do |t|
+    <% table[:attrs].each do |set| -%>
+  t.<%= set[:datatype]%> :<%= set[:attribute]%>
+    <% end -%>
+  t.timestamps
+    end
+<% end -%>
+  end
+end

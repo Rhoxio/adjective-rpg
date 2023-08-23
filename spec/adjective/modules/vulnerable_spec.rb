@@ -38,6 +38,12 @@ RSpec.describe Adjective::Vulnerable do
         expect(actor.max_hitpoints).to eq(10)
       end
 
+      it "should accept a block" do 
+        actor = Adjective::Actor.new do |block_actor|
+          expect((block_actor).class.name).to eq("Adjective::Actor")
+        end
+      end      
+
       it "will save attributes" do
         # This is wrong. Need to set up the tables first.
 

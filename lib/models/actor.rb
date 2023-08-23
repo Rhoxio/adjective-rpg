@@ -4,6 +4,7 @@ require 'awesome_print'
 module Adjective
 
   module DefineActor
+
     def self.construct
       Adjective.send(:remove_const, "Actor") if Adjective.const_defined?("Actor")
       if Adjective.configuration.use_active_record
@@ -18,7 +19,7 @@ module Adjective
     end
 
     def self.eval_actor
-
+      included_mixins = Adjective.configuration.mixins_for("actor").map{|mixin| "Adjective::#{mixin}".constantize}
       # Actor Class with No AR
       # This is set up so we can have functionality outside of linkages, essentially.
       if !Adjective.configuration.use_active_record
@@ -28,13 +29,14 @@ module Adjective
 
             self.class.send(:attr_accessor, :name)
             self.class.send(:attr_accessor, :hitpoints)
+            yield(self) if block_given?
           end
         end
       end
 
-      # Base Actor Class
+      # Base Actor Class with AR
       Adjective::Actor.class_eval do 
-
+        included_mixins.each {|mixin| include mixin}
 
         def shared_method
           true
