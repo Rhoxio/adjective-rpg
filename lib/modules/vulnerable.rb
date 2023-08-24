@@ -34,6 +34,14 @@ module Adjective
       end 
     end
 
+    def self.adjective_columns
+      <<~RUBY
+        # Vulnerable Attributes
+        t.integer :hitpoints
+        t.integer :max_hitpoints
+      RUBY
+    end
+
     # private
 
     # def validate_vulnerable_attributes(args)

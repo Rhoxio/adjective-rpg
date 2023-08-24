@@ -29,7 +29,6 @@ module Adjective
     attr_accessor :use_active_record, :config_file, :config_file_path
 
     def initialize
-      
       @config_file_path = "config/adjective.yml"
       @config_file = read_config_file
       @use_active_record = false

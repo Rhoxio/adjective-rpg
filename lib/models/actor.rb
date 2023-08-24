@@ -28,19 +28,27 @@ module Adjective
             @name = args[:name] ||= nil
 
             self.class.send(:attr_accessor, :name)
-            self.class.send(:attr_accessor, :hitpoints)
             yield(self) if block_given?
           end
         end
       end
 
-      # Base Actor Class with AR
+      # Base Actor Class (with AR and without AR)
       Adjective::Actor.class_eval do 
         included_mixins.each {|mixin| include mixin}
 
         def shared_method
           true
         end
+
+        def adjective_columns
+          <<~RUBY
+            # Actor Attributes
+            t.string :name
+          RUBY
+        end
+
+
       end
     end 
   end
