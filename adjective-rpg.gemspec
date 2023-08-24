@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "lib/adjective/rpg/version"
+require_relative "lib/version"
 
 Gem::Specification.new do |spec|
   spec.name = "adjective-rpg"
@@ -32,7 +32,18 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   # Uncomment to register a new dependency of your gem
-  # spec.add_dependency "example-gem", "~> 1.0"
+
+  # Gem Dependencies
+  spec.add_dependency "rake"
+
+  # Dev Dependencies
+  spec.add_development_dependency "activerecord"
+  spec.add_development_dependency "pg"
+  spec.add_development_dependency "dotenv"
+  spec.add_development_dependency "rspec"
+  spec.add_development_dependency 'simplecov'
+  spec.add_development_dependency 'awesome_print'
+  spec.add_development_dependency "database_cleaner"
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html

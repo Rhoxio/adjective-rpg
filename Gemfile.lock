@@ -2,12 +2,36 @@ PATH
   remote: .
   specs:
     adjective-rpg (0.1.0)
+      rake
 
 GEM
   remote: https://rubygems.org/
   specs:
+    activemodel (7.0.7)
+      activesupport (= 7.0.7)
+    activerecord (7.0.7)
+      activemodel (= 7.0.7)
+      activesupport (= 7.0.7)
+    activesupport (7.0.7)
+      concurrent-ruby (~> 1.0, >= 1.0.2)
+      i18n (>= 1.6, < 2)
+      minitest (>= 5.1)
+      tzinfo (~> 2.0)
     awesome_print (1.9.2)
+    concurrent-ruby (1.2.2)
+    database_cleaner (2.0.2)
+      database_cleaner-active_record (>= 2, < 3)
+    database_cleaner-active_record (2.1.0)
+      activerecord (>= 5.a)
+      database_cleaner-core (~> 2.0.0)
+    database_cleaner-core (2.0.1)
     diff-lcs (1.5.0)
+    docile (1.4.0)
+    dotenv (2.8.1)
+    i18n (1.14.1)
+      concurrent-ruby (~> 1.0)
+    minitest (5.19.0)
+    pg (1.5.3)
     rake (13.0.6)
     rspec (3.12.0)
       rspec-core (~> 3.12.0)
@@ -22,15 +46,27 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.12.0)
     rspec-support (3.12.1)
+    simplecov (0.22.0)
+      docile (~> 1.1)
+      simplecov-html (~> 0.11)
+      simplecov_json_formatter (~> 0.1)
+    simplecov-html (0.12.3)
+    simplecov_json_formatter (0.1.4)
+    tzinfo (2.0.6)
+      concurrent-ruby (~> 1.0)
 
 PLATFORMS
   arm64-darwin-22
 
 DEPENDENCIES
+  activerecord
   adjective-rpg!
   awesome_print
-  rake (~> 13.0)
-  rspec (~> 3.0)
+  database_cleaner
+  dotenv
+  pg
+  rspec
+  simplecov
 
 BUNDLED WITH
    2.4.16
