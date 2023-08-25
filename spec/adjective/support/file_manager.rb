@@ -2,7 +2,7 @@ require 'fileutils'
 
 module FileManager
   def config_file
-    "#{Rails.root}/config/adjective.yml"
+    "#{Rails.root}/config/initializers/adjective.rb"
   end
 
   def remove_config

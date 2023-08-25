@@ -11,7 +11,9 @@ module Adjective
     # write the other logic
 
     def init_vulnerable(args = {}, &block)
-      define_vulnerable_instance_variables(vulnerable_default_data)
+      if !Adjective.configuration.use_active_record
+        define_vulnerable_instance_variables(vulnerable_default_data)
+      end
       yield(self) if block_given?
       # validate_vulnerable_attributes(args)
     end

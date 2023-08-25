@@ -7,7 +7,7 @@ module Adjective
       desc 'Creates an Adjective config file.'
 
       def copy_config
-        template 'adjective.yml', "#{Rails.root}/config/adjective.yml"
+        template 'adjective.rb', "#{Rails.root}/config/initializers/adjective.rb"
       end      
     end
   end

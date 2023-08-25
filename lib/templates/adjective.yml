@@ -1,5 +1,0 @@
-# Used to validate the gem version
-version: 0.1.0
-
-# use_active_record can also be overridden in the config block.
-use_active_record: false
