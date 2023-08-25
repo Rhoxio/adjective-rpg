@@ -1,14 +1,19 @@
 # frozen_string_literal: true
 
 require_relative "version"
+require_relative "railties"
+require_relative "generators/setup_generator"
 require "active_record"
-require_relative "models/actor"
+# require_relative "models/actor"
 require_relative "modules/vulnerable"
-require_relative "models/application_record"
+# require_relative "models/application_record"
 require_relative "utils/migration_renderer"
 require 'awesome_print'
+require 'rails'
 
 module Adjective
+
+  require 'railties' if defined?(Rails)
 
   class Error < StandardError; end
 
@@ -29,21 +34,13 @@ module Adjective
     attr_accessor :use_active_record, :config_file, :config_file_path
 
     def initialize
-      @config_file_path = "config/adjective.yml"
+      @config_file_path = "#{Rails.root}/config/adjective.yml"
       @config_file = read_config_file
-      @use_active_record = false
+      @use_active_record = @config_file['use_active_record']
     end
 
     def read_config_file
       YAML.load_file(@config_file_path)
-    end
-
-    def config_for(klass)
-      config_file["class_options"][klass]
-    end
-
-    def mixins_for(klass)
-      config_file["class_options"][klass]["include"]
     end
 
     def set_config_file_path(dir)

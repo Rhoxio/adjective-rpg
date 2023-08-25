@@ -2,42 +2,24 @@
 
 require_relative "../lib/adjective"
 require "awesome_print"
-require "active_record"
 require 'database_cleaner'
+require 'simplecov'
+ENV['RAILS_ENV'] = 'test'
+ENV['RAILS_ROOT'] ||= "#{File.dirname(__FILE__)}../../../spec/dummy"
+require_relative '../spec/dummy/config/environment'
+require_relative 'adjective/support/file_manager'
 
-DATABASE_NAME = 'adjective_test'
 
-database_config = {
-  adapter: 'postgresql',
-  host: 'localhost',
-  database: 'postgres',
-  username: ENV["DATABASE_USER"],
-  password: '',
-  port: 5432
-}
-
-ActiveRecord::Base.establish_connection(database_config)
-
-if ActiveRecord::Base.connection.select_value("SELECT 1 FROM pg_database WHERE datname = '#{DATABASE_NAME}'") != 1
-  ActiveRecord::Base.connection.create_database(DATABASE_NAME)
-elsif ActiveRecord::Base.connection.select_value("SELECT 1 FROM pg_database WHERE datname = '#{DATABASE_NAME}'") == 1
-  ActiveRecord::Base.connection.recreate_database(DATABASE_NAME)
-else
-  puts "Something went wrong... because the database is a Schrodinger"
-end
-
-ActiveRecord::Base.establish_connection(database_config.merge(database: DATABASE_NAME))
-
-Adjective.configure do |config|
-  config.use_active_record = false
-end
-
+# Adjective.configure do |config|
+#   config.use_active_record = false
+# end
 
 RSpec.configure do |config|
+  config.include FileManager
 
   config.before(:suite) do
-    DatabaseCleaner.clean_with(:truncation)
-    ActiveRecord::MigrationContext.new('db/migrate').migrate
+    # DatabaseCleaner.clean_with(:truncation)
+    # ActiveRecord::MigrationContext.new('db/migrate').migrate
   end
 
   # Enable flags like --only-failures and --next-failure

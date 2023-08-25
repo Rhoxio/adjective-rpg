@@ -4,15 +4,7 @@ namespace :adjective do
 
   desc 'setup the initial config for Adjective'
   task :setup do 
-    # Need to have it generate a config file and put it in the /config folder.
-    origin_config_file = File.read('lib/templates/adjective.yml')
-    new_config_file_path = File.join('config', 'adjective.yml')
-
-    File.open(new_config_file_path, 'w') do |file|
-      file.write(origin_config_file)
-    end
-
-    puts "Created Adjective config file at: #{new_config_file_path}"
+    Adjective::Generators::SetupGenerator.new.copy_config
   end
 
   task :test do 

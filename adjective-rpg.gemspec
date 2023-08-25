@@ -44,6 +44,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'simplecov'
   spec.add_development_dependency 'awesome_print'
   spec.add_development_dependency "database_cleaner"
+  spec.add_development_dependency "rails", "~> 7.0.6"
+  spec.add_development_dependency "tzinfo-data"
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html
