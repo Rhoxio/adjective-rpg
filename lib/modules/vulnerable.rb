@@ -44,6 +44,15 @@ module Adjective
       RUBY
     end
 
+    def self.adjective_add_columns(klass)
+      columns = <<-RUBY
+    # Vulnerable Attributes
+    add_column {{klass}}, :hitpoints, :integer
+    add_column {{klass}}, :max_hitpoints, :integer
+    RUBY
+      columns.gsub("{{klass}}", ":#{klass.downcase}")
+    end
+
     # private
 
     # def validate_vulnerable_attributes(args)

@@ -1,3 +1,5 @@
+require_relative "adjective"
+
 class ApplicationRecord < ActiveRecord::Base
   primary_abstract_class
 end

@@ -3,6 +3,7 @@ PATH
   specs:
     adjective-rpg (0.1.0)
       rake
+      thor
 
 GEM
   remote: https://rubygems.org/

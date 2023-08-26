@@ -6,8 +6,10 @@ require_relative "railties"
 # require_relative "included_models"
 require "active_record"
 require_relative "modules/vulnerable"
+require_relative "modules/imbibable"
 # require_relative "models/application_record"
 require_relative "utils/migration_renderer"
+require_relative "templates/add_columns_migration"
 require 'awesome_print'
 require 'rails'
 
@@ -37,16 +39,21 @@ module Adjective
   # end
 
   class Configuration
-    attr_accessor :use_active_record, :config_file, :config_file_path, :models_path
+    attr_accessor :use_active_record, :config_file_path, :root
 
     def initialize
-      root = defined?(Rails) ? Rails.root : "."
-      models_path = defined?(Rails) ? "#{root}/app/models" : "app/models"
+      @use_active_record = true
+      # Need to set this up to ensure that if AR is off, it doesn't auto-set shit.
+
+      @root = defined?(Rails) ? Rails.root : "."
 
       @config_file_path = "#{root}/config/initializers/adjective.rb"
-      @use_active_record = true
-      @models_path = models_path
+      # @models_path = set_models_path
     end
+
+    # def set_models_path
+    #   (defined?(Rails) && use_active_record) ? "#{@root}/app/models" : "app/models"
+    # end
 
   end
 
