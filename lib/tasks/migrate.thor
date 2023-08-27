@@ -10,6 +10,11 @@ require 'thor'
 # thor adjective:generate:scaffold_for Enemy --includes Vulnerable --config spec/dummy/config/initializers/adjective --rails_load_path ../../spec/dummy/config/environment
 # thor adjective:generate:columns_for Enemy --includes Vulnerable --config spec/dummy/config/initializers/adjective --rails_load_path ../../spec/dummy/config/environment
 
+# TODO:
+# Need to set a deault path for adjective loading from a Rails project.
+# Clean shit up. Lots of duplication here. 
+# Might need to change the app conventions around to consider Rails a default.
+
 module Adjective
   class AdjectiveTasks < Thor
     include Thor::Actions

@@ -18,3 +18,10 @@ namespace :spec do
     system("rspec spec/adjective/rails_specs/** --require ./spec/adjective/rails_helper")
   end  
 end
+
+namespace :build do 
+  task :gem do 
+    system("gem build adjective.gemspec")
+    system("gem install adjective-0.1.0.gem")
+  end
+end

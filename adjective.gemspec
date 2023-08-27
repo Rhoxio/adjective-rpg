@@ -3,7 +3,7 @@
 require_relative "lib/version"
 
 Gem::Specification.new do |spec|
-  spec.name = "adjective-rpg"
+  spec.name = "adjective"
   spec.version = Adjective::VERSION
   spec.authors = ["Kevin Maze"]
   spec.email = ["rhoxiodbc@gmail.com"]
