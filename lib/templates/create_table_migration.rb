@@ -1,5 +1,5 @@
 module Adjective
-  class AddColumnsMigration
+  class CreateTableMigration
     attr_reader :module_classes, :modules, :class_name
 
     def initialize(class_name, modules = [])
@@ -10,9 +10,13 @@ module Adjective
       @module_classes = given_modules
     end
 
+    def class_name_sym
+      ":#{@class_name.underscore.downcase}"
+    end
+
     def migration_class
       modules_string = @modules.map {|m| m.capitalize}.join("And")
-      "Add#{modules_string}To#{@class_name.camelize}"
+      "Create#{@class_name.camelize}With#{modules_string}"
     end
 
     def file_name
@@ -25,41 +29,33 @@ module Adjective
       @modules.map do |mod|
         klass = "Adjective::#{mod.capitalize}".constantize
       end
-    end
+    end  
 
-    def attribute_up_fields
+    def columns
       @module_classes.map do |mod|
-        mod.adjective_add_columns(@class_name)
+        mod.adjective_columns
       end.join("\n").chomp
-    end
-
-    def attribute_down_fields
-      attribute_up_fields.gsub("add_column", "remove_column")
     end
 
     def base_template
       <<~TEMPLATE
         class {{migration_class}} < ActiveRecord::Migration[{{version}}]
-          def up
-            {{add_methods}}
-          end
-
-          def down
-            {{remove_methods}}
+          def change
+            create_table {{class_name}} do |t|
+              {{create_columns}}
+            end
           end
         end
       TEMPLATE
-    end
+    end 
 
     def render
       base = base_template
       base
         .gsub("{{migration_class}}", migration_class.lstrip)
-        .gsub("{{add_methods}}", attribute_up_fields.lstrip)
-        .gsub("{{remove_methods}}", attribute_down_fields.lstrip)
+        .gsub("{{class_name}}", class_name_sym.lstrip)
+        .gsub("{{create_columns}}", columns.lstrip)
         .gsub("{{version}}", @version)
-    end
-
-
+    end     
   end
 end

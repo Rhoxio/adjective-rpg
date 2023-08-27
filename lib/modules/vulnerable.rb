@@ -37,10 +37,10 @@ module Adjective
     end
 
     def self.adjective_columns
-      <<~RUBY
-        # Vulnerable Attributes
-        t.integer :hitpoints
-        t.integer :max_hitpoints
+      <<-RUBY
+      # Vulnerable Attributes
+      t.integer :hitpoints
+      t.integer :max_hitpoints
       RUBY
     end
 

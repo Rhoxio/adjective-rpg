@@ -5,11 +5,12 @@ require_relative "railties"
 
 # require_relative "included_models"
 require "active_record"
+require 'thor'
 require_relative "modules/vulnerable"
 require_relative "modules/imbibable"
-# require_relative "models/application_record"
-require_relative "utils/migration_renderer"
+require_relative "utils/string_patches"
 require_relative "templates/add_columns_migration"
+require_relative "templates/create_table_migration"
 require 'awesome_print'
 require 'rails'
 
@@ -39,7 +40,7 @@ module Adjective
   # end
 
   class Configuration
-    attr_accessor :use_active_record, :config_file_path, :root
+    attr_accessor :use_active_record, :config_file_path, :root, :migration_path
 
     def initialize
       @use_active_record = true
@@ -48,6 +49,7 @@ module Adjective
       @root = defined?(Rails) ? Rails.root : "."
 
       @config_file_path = "#{root}/config/initializers/adjective.rb"
+      @migration_path = "#{root}/db/migrate"
       # @models_path = set_models_path
     end
 

@@ -22,10 +22,10 @@ module Adjective
     end    
 
     def self.adjective_columns
-      <<~RUBY
-        # Vulnerable Attributes
-        t.integer :total_experience
-        t.integer :level
+      <<-RUBY
+      # Vulnerable Attributes
+      t.integer :total_experience
+      t.integer :level
       RUBY
     end
 

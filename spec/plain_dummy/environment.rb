@@ -7,6 +7,7 @@ end
 module PlainDummy
   class Character
     def initialize
+      ap __FILE__
       ap "plain dummy loaded"
     end
   end
