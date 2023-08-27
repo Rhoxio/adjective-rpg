@@ -1,11 +1,12 @@
-require_relative "../lib/adjective"
+require_relative "../../lib/adjective"
 require "awesome_print"
 require 'database_cleaner'
-require_relative '../spec/plain_dummy/environment'
+require_relative '../plain_dummy/environment'
 require "active_record"
 
-DATABASE_NAME = 'adjective_plain_test'
+Object.send(:remove_const, :Rails) if Object.const_defined?(:Rails)
 
+DATABASE_NAME = 'adjective_plain_test' 
 database_config = {
   adapter: 'postgresql',
   host: 'localhost',
@@ -31,8 +32,13 @@ RSpec.configure do |config|
 
   config.before(:suite) do
     DatabaseCleaner.clean_with(:truncation)
-    # Going to assume that they want to generate the migrations in this dir.
-    ActiveRecord::MigrationContext.new('db/migrate').migrate
+    Dir[File.join("/Users/maze/Desktop/adjective-rpg/spec/plain_dummy/db/migrate", '*.rb')].each do |file|
+      require file
+
+      migration_class_name = File.basename(file, '.rb').split("_").drop(1).join("_").camelize
+      migration_class = migration_class_name.constantize
+      migration_class.new.migrate(:up)
+    end
   end
 
   # Enable flags like --only-failures and --next-failure

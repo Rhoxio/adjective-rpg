@@ -8,3 +8,13 @@ RSpec::Core::RakeTask.new(:spec)
 
 task default: :spec
 Rake::Task.define_task('adjective:db:generate_all_tables')
+
+namespace :spec do
+  task :plain do
+    system("rspec spec/adjective/plain_specs/** --require ./spec/adjective/plain_helper")
+  end
+
+  task :rails do
+    system("rspec spec/adjective/rails_specs/** --require ./spec/adjective/rails_helper")
+  end  
+end

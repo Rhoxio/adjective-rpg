@@ -1,0 +1,1 @@
+require_relative '../../plain_specs/generators/class_spec'

@@ -1,9 +1,0 @@
-# This file is where you can include specific modules and tewak other load settings
-# outside of the initializer/entry point you have defined. It's primarily for 
-# module linkages to help with ActiveRecord table generation.
-
-version: 0.1.0
-use_active_record: true
-class_options:
-  actor:
-    include: []

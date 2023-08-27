@@ -1,19 +1,5 @@
 RSpec.describe Adjective do
 
-  it "will let me access the scoped class" do 
-    char = PlainDummy::Character.new
-    # enemy = Enemy.new
-  end
-
-  it "will load Adjective lib configs" do 
-    expect(Adjective.configuration.use_active_record).to eq(true)
-    expect(Adjective.configuration.root).to eq("/Users/maze/Desktop/adjective-rpg/spec/plain_dummy/")
-  end
-
-  it "will set the config_file_path to the dir where the initializer is" do 
-    expect(Adjective.configuration.config_file_path).to eq("/Users/maze/Desktop/adjective-rpg/spec/plain_dummy/adjective.rb")
-  end
-
   describe Adjective::AddColumnsMigration do 
     it "will load class_name correctly" do 
       template = Adjective::AddColumnsMigration.new("Character", ["vulnerable"])
@@ -118,46 +104,6 @@ RSpec.describe Adjective do
       expect(chunks[10].lstrip).to eq("end")
       expect(chunks[11].lstrip).to eq("end")
       expect(chunks[12].lstrip).to eq("end")
-    end
-  end
-
-  describe Adjective::CreateAdjectiveClass do
-
-    it "will generate the correct class name" do 
-      template = Adjective::CreateAdjectiveClass.new("enemy", ["vulnerable", "imbibable"])
-      expect(template.file_class_name).to eq("Enemy")
-    end
-
-    it "will generate the correct file name" do 
-      template = Adjective::CreateAdjectiveClass.new("enemy", ["vulnerable", "imbibable"])
-      expect(template.file_name).to eq("enemy.rb")
-    end
-
-    it "will generate the correcy modules string" do 
-      template = Adjective::CreateAdjectiveClass.new("enemy", ["vulnerable", "imbibable"])
-      chunks = template.modules_string.split("\n")
-      expect(chunks[0].lstrip).to eq("include Adjective::Vulnerable")
-      expect(chunks[1].lstrip).to eq("include Adjective::Imbibable")
-    end
-
-    it "will return the correct inherited_classes per config context" do 
-      template = Adjective::CreateAdjectiveClass.new("enemy", ["vulnerable", "imbibable"])
-      expect(template.inherited_classes).to eq("< ApplicationRecord")
-
-      Adjective.configure {|config| config.use_active_record = false}
-      template = Adjective::CreateAdjectiveClass.new("enemy", ["vulnerable", "imbibable"])
-      expect(template.inherited_classes).to eq("")
-
-      Adjective.configure {|config| config.use_active_record = true}
-    end
-
-    it "will render the class correctly" do 
-      template = Adjective::CreateAdjectiveClass.new("enemy", ["vulnerable", "imbibable"])
-      chunks = template.render.split("\n")
-      pieces = ["class Enemy < ApplicationRecord", "include Adjective::Vulnerable", "include Adjective::Imbibable", "end"]
-      chunks.each do |chunk|
-        expect(pieces.include?(chunk.lstrip)).to eq(true)
-      end
     end
   end
 end
