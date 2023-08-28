@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    adjective (0.1.0)
+    adjective-rpg (0.1.1)
       rake
       thor
 
@@ -185,7 +185,7 @@ PLATFORMS
 
 DEPENDENCIES
   activerecord
-  adjective!
+  adjective-rpg!
   awesome_print
   database_cleaner
   dotenv
