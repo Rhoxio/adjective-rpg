@@ -1,4 +1,14 @@
 require 'thor'
+require 'awesome_print'
+# gem_lib_path = File.expand_path('../../lib', __dir__)
+# require "#{gem_lib_path}/adjective"
+# require "adjective"
+
+# require_relative "../adjective"
+# Adjective.configure do |config|
+#   ap config
+# end
+
 
 # These are assumed to be run from the project root dir.
 
@@ -11,15 +21,18 @@ require 'thor'
 # thor adjective:generate:columns_for Enemy --includes Vulnerable --config spec/dummy/config/initializers/adjective --rails_load_path ../../spec/dummy/config/environment
 
 # TODO:
+
 # Need to set a deault path for adjective loading from a Rails project.
+
 # Clean shit up. Lots of duplication here. 
-# Might need to change the app conventions around to consider Rails a default.
+
+# Might need to change the app conventions around to consider Rails
 
 module Adjective
   class AdjectiveTasks < Thor
     include Thor::Actions
 
-    default_rails_load_path = './config/environment'
+    default_rails_load_path = 'config/environment'
 
     package_name "adjective"
     namespace 'adjective:generate'
@@ -40,7 +53,7 @@ module Adjective
 
       config_file_path = ENV['ADJECTIVE_CONFIG_PATH'] ||= options[:config]
       adj_configs = File.join( Dir.pwd, config_file_path)
-      rails_load_path = options[:rails_load_path] ||= default_rails_load_path
+      rails_load_path = options[:rails_load_path] || default_rails_load_path
 
       require adj_configs
       if Adjective.configuration.use_rails
@@ -67,9 +80,10 @@ module Adjective
     method_options :config => :string
     method_options :rails_load_path => :string
     def scaffold_for(model)
+      default_rails_load_path = './config/environment'
       config_file_path = ENV['ADJECTIVE_CONFIG_PATH'] ||= options[:config]
       adj_configs = File.join( Dir.pwd, config_file_path)
-      rails_load_path = options[:rails_load_path] ||= default_rails_load_path
+      rails_load_path = options[:rails_load_path] || default_rails_load_path
 
       require adj_configs
 
