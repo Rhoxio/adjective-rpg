@@ -3,13 +3,13 @@
 require_relative "lib/version"
 
 Gem::Specification.new do |spec|
-  spec.name = "adjective-rpg"
+  spec.name = "adjective"
   spec.version = Adjective::VERSION
   spec.authors = ["Kevin Maze"]
   spec.email = ["rhoxiodbc@gmail.com"]
 
-  spec.summary = "Write a short summary, because RubyGems requires one."
-  spec.description = "Write a longer description or delete this line."
+  spec.summary = "A gem to help you get RPG games built quickly in Ruby environments"
+  spec.description = "Incomplete and in early stages."
   spec.homepage = "https://www.google.com"
   spec.required_ruby_version = ">= 2.6.0"
 
@@ -29,7 +29,7 @@ Gem::Specification.new do |spec|
   end
   spec.bindir = "exe"
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
-  spec.require_paths = ["lib"]
+  spec.require_paths = ["lib", "tasks/**/*.rake", "tasks/**/*.thor"]
 
   # Uncomment to register a new dependency of your gem
 
