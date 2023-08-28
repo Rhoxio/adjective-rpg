@@ -5,7 +5,17 @@ module FileManager
     "#{Rails.root}/config/initializers/adjective.rb"
   end
 
-  def remove_config
-    FileUtils.remove_file config_file if File.file?(config_file)
+  def self.truncate_files(directory_path)
+    if Dir.exist?(directory_path)
+      Dir.foreach(directory_path) do |file|
+        next if file == '.' || file == '..' || File.directory?(File.join(directory_path, file))
+        File.delete(File.join(directory_path, file))
+      end
+    else
+      puts "Directory does not exist: #{directory_path}"
+    end
   end
 end
+
+
+# Iterate through files in the directory and delete them

@@ -1,6 +1,7 @@
 require_relative "../../lib/adjective"
 require "awesome_print"
 require 'database_cleaner'
+require_relative "support/file_manager"
 require_relative '../plain_dummy/environment'
 require "active_record"
 
