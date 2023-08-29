@@ -25,7 +25,7 @@ end
 namespace :build do 
   task :gem do 
     system("gem build adjective-rpg.gemspec")
-    # system("gem uninstall adjective-rpg")
+    system("gem uninstall adjective-rpg")
     system("gem install adjective-rpg-#{Adjective::VERSION}.gem")
   end
 end

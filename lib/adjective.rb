@@ -12,6 +12,9 @@ require_relative "templates/add_columns_migration"
 require_relative "templates/create_table_migration"
 require_relative "templates/create_adjective_class"
 
+RAILS_DEFAULT_LOAD_PATH = 'config/environment'
+ADJECTIVE_DEFAULT_CONFIG_PATH = "config/initializers/adjective"
+
 module Adjective
 
   if defined?(Rails)

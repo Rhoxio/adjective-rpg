@@ -38,90 +38,90 @@ module Adjective
     package_name "adjective"
     namespace 'adjective:generate'
 
-    desc "columns_for", "generates the needed migration columns for the supplied model and included modules"
-    method_options :includes => :array
-    method_options :config => :string
-    method_options :rails_load_path => :string
-    def columns_for(model)
-      # This assumes that you are running the command from the root of your project when you pass in relative --config
-      # into the generator. I might need to make it so you can fully override it with an ENV variable, but the relative
-      # path works for the moment.
+    # desc "columns_for", "generates the needed migration columns for the supplied model and included modules"
+    # method_options :includes => :array
+    # method_options :config => :string
+    # method_options :rails_load_path => :string
+    # def columns_for(model)
+    #   # This assumes that you are running the command from the root of your project when you pass in relative --config
+    #   # into the generator. I might need to make it so you can fully override it with an ENV variable, but the relative
+    #   # path works for the moment.
 
-      # The main issue is that the Adjective configs need to be required. I have to construct an absolute path
-      # in some sense because there's no guarantee that the defaults will always work.
-      # I think having them set them in the configs and once in the generation scripts or in an env var is
-      # perfectly reasonable. How else is the program supposed to know their custom file structure?
-      default_rails_load_path = 'config/environment'
+    #   # The main issue is that the Adjective configs need to be required. I have to construct an absolute path
+    #   # in some sense because there's no guarantee that the defaults will always work.
+    #   # I think having them set them in the configs and once in the generation scripts or in an env var is
+    #   # perfectly reasonable. How else is the program supposed to know their custom file structure?
+    #   default_rails_load_path = 'config/environment'
 
-      config_file_path = options[:config] || 'config/initializers'
-      adj_configs = File.join( Dir.pwd, config_file_path)
-      rails_load_path = options[:rails_load_path] || default_rails_load_path
+    #   config_file_path = options[:config] || 'config/initializers'
+    #   adj_configs = File.join( Dir.pwd, config_file_path)
+    #   rails_load_path = options[:rails_load_path] || default_rails_load_path
 
-      require adj_configs
-      if Adjective.configuration.use_rails
-        require_relative rails_load_path
-        Adjective.configuration.set_new_root(Rails.root)
-      end
+    #   require adj_configs
+    #   if Adjective.configuration.use_rails
+    #     require_relative rails_load_path
+    #     Adjective.configuration.set_new_root(Rails.root)
+    #   end
 
-      modules = !!options[:includes] ? options[:includes] : []
+    #   modules = !!options[:includes] ? options[:includes] : []
 
-      generator = Adjective::AddColumnsMigration.new(model, modules)
-      migration_class = generator.render
+    #   generator = Adjective::AddColumnsMigration.new(model, modules)
+    #   migration_class = generator.render
 
-      new_migration_path = File.join(Adjective.configuration.migration_path, generator.file_name)
+    #   new_migration_path = File.join(Adjective.configuration.migration_path, generator.file_name)
 
-      File.open(new_migration_path, 'w') do |file|
-        file.write(migration_class)
-      end
-      say "Adjective migration created at: #{new_migration_path}", :green
+    #   File.open(new_migration_path, 'w') do |file|
+    #     file.write(migration_class)
+    #   end
+    #   say "Adjective migration created at: #{new_migration_path}", :green
 
-    end
+    # end
 
-    desc "scaffold_for", "generates a class definition and the relevant migrations based on Adjective configs"
-    method_options :includes => :array
-    method_options :config => :string
-    method_options :rails_load_path => :string
-    def scaffold_for(model)
-      default_rails_load_path = 'config/environment'
+    # desc "scaffold_for", "generates a class definition and the relevant migrations based on Adjective configs"
+    # method_options :includes => :array
+    # method_options :config => :string
+    # method_options :rails_load_path => :string
+    # def scaffold_for(model)
+    #   default_rails_load_path = 'config/environment'
 
-      config_file_path = options[:config] || 'config/initializers'
+    #   config_file_path = options[:config] || 'config/initializers'
 
-      # /Users/maze/.rvm/gems/ruby-3.1.2/gems/adjective-rpg-0.1.2/lib/tasks/config/environment (LoadError)
-      # Curently trying to load the app config from the gem file.
-      # This is probably an issue with Dir.pwd. 
+    #   # /Users/maze/.rvm/gems/ruby-3.1.2/gems/adjective-rpg-0.1.2/lib/tasks/config/environment (LoadError)
+    #   # Curently trying to load the app config from the gem file.
+    #   # This is probably an issue with Dir.pwd. 
 
-      adj_configs = File.join( Dir.pwd, config_file_path)
-      rails_load_path = options[:rails_load_path] || default_rails_load_path
+    #   adj_configs = File.join( Dir.pwd, config_file_path)
+    #   rails_load_path = options[:rails_load_path] || default_rails_load_path
 
-      require adj_configs
+    #   require adj_configs
 
-      if Adjective.configuration.use_rails
-        require_relative rails_load_path
-        Adjective.configuration.set_new_root(Rails.root)
-      end
+    #   if Adjective.configuration.use_rails
+    #     require_relative rails_load_path
+    #     Adjective.configuration.set_new_root(Rails.root)
+    #   end
       
-      modules = !!options[:includes] ? options[:includes] : []
+    #   modules = !!options[:includes] ? options[:includes] : []
 
-      generator = Adjective::CreateTableMigration.new(model, modules)
-      migration_class = generator.render
+    #   generator = Adjective::CreateTableMigration.new(model, modules)
+    #   migration_class = generator.render
 
-      class_generator = Adjective::CreateAdjectiveClass.new(model, modules)
-      new_class_file = class_generator.render
+    #   class_generator = Adjective::CreateAdjectiveClass.new(model, modules)
+    #   new_class_file = class_generator.render
 
-      new_migration_path = File.join(Adjective.configuration.migration_path, generator.file_name)
-      new_model_path = File.join(Adjective.configuration.models_path, class_generator.file_name)
+    #   new_migration_path = File.join(Adjective.configuration.migration_path, generator.file_name)
+    #   new_model_path = File.join(Adjective.configuration.models_path, class_generator.file_name)
 
-      File.open(new_migration_path, 'w') do |file|
-        file.write(migration_class)
-        say "Adjective migration created at: #{new_migration_path}", :green      
-      end      
+    #   File.open(new_migration_path, 'w') do |file|
+    #     file.write(migration_class)
+    #     say "Adjective migration created at: #{new_migration_path}", :green      
+    #   end      
 
-      File.open(new_model_path, 'w') do |file|
-        file.write(new_class_file)
-        say "New model created at: #{new_model_path}", :green      
-      end
+    #   File.open(new_model_path, 'w') do |file|
+    #     file.write(new_class_file)
+    #     say "New model created at: #{new_model_path}", :green      
+    #   end
       
-    end
+    # end
 
   end
 end

@@ -1,7 +1,11 @@
 require "adjective"
 
-RAILS_DEFAULT_LOAD_PATH = 'config/environment'
-ADJECTIVE_DEFAULT_CONFIG_PATH = "config/initializers/adjective"
+# rake adjective:add_columns_for -- model=Character config_path=spec/plain_dummy/adjective include=Vulnerable,Imbibable
+# rake adjective:add_columns_for -- model=Character config_path=spec/dummy/config/initializers/adjective rails_load_path=spec/dummy/config/environment include=Vulnerable,Imbibable
+
+
+# RAILS_DEFAULT_LOAD_PATH = 'config/environment'
+# ADJECTIVE_DEFAULT_CONFIG_PATH = "config/initializers/adjective"
 
 def invalid_modules?(modules)
   modules.blank? || modules.size == 0 || modules.include?("include")
