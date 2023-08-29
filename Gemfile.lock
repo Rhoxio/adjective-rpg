@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    adjective-rpg (0.1.1)
+    adjective-rpg (0.1.4)
       rake
       thor
 

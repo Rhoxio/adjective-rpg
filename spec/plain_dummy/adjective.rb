@@ -1,3 +1,5 @@
+require "adjective"
+
 root = "/Users/maze/Desktop/adjective-rpg/spec/plain_dummy/"
 migration_path = "/Users/maze/Desktop/adjective-rpg/spec/plain_dummy/db/migrate"
 models_path = "/Users/maze/Desktop/adjective-rpg/spec/plain_dummy/models"

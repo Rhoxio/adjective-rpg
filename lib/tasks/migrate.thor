@@ -20,19 +20,20 @@ require 'awesome_print'
 # thor adjective:generate:scaffold_for Enemy --includes Vulnerable --config spec/dummy/config/initializers/adjective --rails_load_path ../../spec/dummy/config/environment
 # thor adjective:generate:columns_for Enemy --includes Vulnerable --config spec/dummy/config/initializers/adjective --rails_load_path ../../spec/dummy/config/environment
 
-# TODO:
+# Having an issue with the tasks not getting loaded in the environment on gem installation. 
 
-# Need to set a deault path for adjective loading from a Rails project.
+# The more I muck with this, the more I feel like just having plain Rake tasks makes so much more sense.
+# If I just use Rake tasks, I don't need to do anything other than have them include the loaded tasks
+# in their own Rakefile. This greatly simplifies the installation process and removes a dependency on Thor.
+# This would also probably help me solve the stupid namespacing issue when I was naked-loading the Thor tasks
+# from the /tasks dir. 
 
-# Clean shit up. Lots of duplication here. 
-
-# Might need to change the app conventions around to consider Rails
+# As for install and read paths, I need to ensure that the relative paths are actually set up the right way.
+# There seems to be bugs in the paths where it uses Dir.pwd, so I need to come up with a better solution in that space.
 
 module Adjective
   class AdjectiveTasks < Thor
     include Thor::Actions
-
-    default_rails_load_path = 'config/environment'
 
     package_name "adjective"
     namespace 'adjective:generate'
@@ -50,8 +51,9 @@ module Adjective
       # in some sense because there's no guarantee that the defaults will always work.
       # I think having them set them in the configs and once in the generation scripts or in an env var is
       # perfectly reasonable. How else is the program supposed to know their custom file structure?
+      default_rails_load_path = 'config/environment'
 
-      config_file_path = ENV['ADJECTIVE_CONFIG_PATH'] ||= options[:config]
+      config_file_path = options[:config] || 'config/initializers'
       adj_configs = File.join( Dir.pwd, config_file_path)
       rails_load_path = options[:rails_load_path] || default_rails_load_path
 
@@ -80,8 +82,14 @@ module Adjective
     method_options :config => :string
     method_options :rails_load_path => :string
     def scaffold_for(model)
-      default_rails_load_path = './config/environment'
-      config_file_path = ENV['ADJECTIVE_CONFIG_PATH'] ||= options[:config]
+      default_rails_load_path = 'config/environment'
+
+      config_file_path = options[:config] || 'config/initializers'
+
+      # /Users/maze/.rvm/gems/ruby-3.1.2/gems/adjective-rpg-0.1.2/lib/tasks/config/environment (LoadError)
+      # Curently trying to load the app config from the gem file.
+      # This is probably an issue with Dir.pwd. 
+
       adj_configs = File.join( Dir.pwd, config_file_path)
       rails_load_path = options[:rails_load_path] || default_rails_load_path
 

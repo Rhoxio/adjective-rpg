@@ -42,7 +42,7 @@ module Adjective
       @use_rails = defined?(Rails) ? true : false
       # Need to set this up to ensure that if AR is off, it doesn't auto-set shit.
 
-      @root = use_rails ? Rails.root : "."
+      @root = use_rails ? Rails.root : ""
 
       @config_file_path = "#{root}/config/initializers/adjective.rb"
       @migration_path = "#{root}/db/migrate"
