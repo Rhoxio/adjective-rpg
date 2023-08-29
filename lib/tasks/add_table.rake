@@ -1,6 +1,10 @@
 require "adjective"
 
+# Plain
 # rake adjective:scaffold_for -- model=Character config_path=spec/plain_dummy/adjective include=Vulnerable,Imbibable
+
+# Rails
+# rake adjective:scaffold_for -- model=Character include=Vulnerable,Imbibable
 
 def invalid_modules?(modules)
   modules.blank? || modules.size == 0 || modules.include?("include")
@@ -22,7 +26,7 @@ namespace :adjective do
     given_modules = ARGV.find { |arg| arg.include?("include=") }&.split("=")&.last || []
 
     if invalid_modules?(given_modules)
-      puts "\e[33mYou are about to create a migration and model named #{model.capitalize} without any modules included with the 'include=' option. This will create a migration without attributes and a model without 'include' statements. \nDo you wish to continue? [Y/n]\e[0m"
+      puts "\e[33mYou are about to create a migration and model named #{model.capitalize} without any modules included with the 'include=' option. This will create a migration without columns and a model without 'include' statements. \nDo you wish to continue? [Y/n]\e[0m"
       response = STDIN.gets.strip
       abort("\e[31mCancelled migration generation.\e[0m") unless response.downcase == "y"
     end
@@ -43,7 +47,7 @@ namespace :adjective do
 
     generator = Adjective::CreateTableMigration.new(model, modules)
     migration_class = generator.render
-    
+
     class_generator = Adjective::CreateAdjectiveClass.new(model, modules)
     new_class_file = class_generator.render
 

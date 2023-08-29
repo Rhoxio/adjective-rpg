@@ -1,7 +1,7 @@
 require "adjective"
 
 namespace :adjective do 
-  desc "Generate initial Adjective files"
+  desc "Generate the initial Adjective config file"
   task :install do 
     # plain_dummy install command:
     # rake adjective:install -- config_path=spec/plain_dummy/ thorfile_path=spec/plain_dummy/
@@ -22,7 +22,7 @@ namespace :adjective do
       FileUtils.cp(adj_config_location, config_install_path)
       puts "\e[32mInstalled the Adjective configs to: #{File.join(config_install_path, "adjective.rb")}\e[0m"
     rescue => e
-      puts "\e[31mError occured while copying the Adjective Thorfile: #{e.message}\e[0m"
+      puts "\e[31mError occured while copying the Adjective config file: #{e.message}\e[0m"
     end   
 
   end

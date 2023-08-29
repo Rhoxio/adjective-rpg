@@ -27,7 +27,7 @@ namespace :adjective do
     given_modules = ARGV.find { |arg| arg.include?("include=") }&.split("=")&.last || []
 
     if invalid_modules?(given_modules)
-      puts "\e[33mYou are about to create a migration for #{model.capitalize} without any modules included with the 'include=' option. This will create a blank migration. \nDo you wish to continue? [Y/n]\e[0m"
+      puts "\e[33mYou are about to create a migration for #{model.capitalize} without any modules included with the 'include=' option. This will create a migration without columns. \nDo you wish to continue? [Y/n]\e[0m"
       response = STDIN.gets.strip
       abort("\e[31mCancelled migration generation.\e[0m") unless response.downcase == "y"
     end
@@ -37,7 +37,7 @@ namespace :adjective do
     adj_config = File.join(Dir.pwd, config_install_path)
     rails_environment_path = File.join(Dir.pwd, rails_load_path)
 
-    raise Errno::ENOENT, "Adjective config file was not found at: #{adj_config}. Please check the relative path set in the 'config_install_path=' option and try again." unless File.exists?(adj_config+".rb")
+    raise Errno::ENOENT, "\e[33mAdjective config file was not found at: #{adj_config}. Please check the relative path set in the 'config_install_path=' option and try again." unless File.exists?(adj_config+".rb")
 
     require adj_config
 
