@@ -11,7 +11,9 @@ module Adjective
     # write the other logic
 
     def init_vulnerable(args = {}, &block)
-      define_vulnerable_instance_variables(vulnerable_default_data)
+      if !Adjective.configuration.use_active_record
+        define_vulnerable_instance_variables(vulnerable_default_data)
+      end
       yield(self) if block_given?
       # validate_vulnerable_attributes(args)
     end
@@ -35,11 +37,20 @@ module Adjective
     end
 
     def self.adjective_columns
-      <<~RUBY
-        # Vulnerable Attributes
-        t.integer :hitpoints
-        t.integer :max_hitpoints
+      <<-RUBY
+      # Vulnerable Attributes
+      t.integer :hitpoints
+      t.integer :max_hitpoints
       RUBY
+    end
+
+    def self.adjective_add_columns(klass)
+      columns = <<-RUBY
+    # Vulnerable Attributes
+    add_column {{klass}}, :hitpoints, :integer
+    add_column {{klass}}, :max_hitpoints, :integer
+    RUBY
+      columns.gsub("{{klass}}", ":#{klass.downcase}")
     end
 
     # private

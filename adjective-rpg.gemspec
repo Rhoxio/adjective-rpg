@@ -8,12 +8,12 @@ Gem::Specification.new do |spec|
   spec.authors = ["Kevin Maze"]
   spec.email = ["rhoxiodbc@gmail.com"]
 
-  spec.summary = "Write a short summary, because RubyGems requires one."
-  spec.description = "Write a longer description or delete this line."
+  spec.summary = "A gem to help you get RPG games built quickly in Ruby environments"
+  spec.description = "Incomplete and in early stages."
   spec.homepage = "https://www.google.com"
   spec.required_ruby_version = ">= 2.6.0"
 
-  spec.metadata["allowed_push_host"] = "TODO: Set to your gem server 'https://example.com'"
+  # spec.metadata["allowed_push_host"] = "TODO: Set to your gem server 'https://example.com'"
 
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = "https://github.com/Rhoxio/adjective-rpg"
@@ -29,12 +29,13 @@ Gem::Specification.new do |spec|
   end
   spec.bindir = "exe"
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
-  spec.require_paths = ["lib"]
+  spec.require_paths = ["lib", "tasks/**/*.rake", "tasks/**/*.thor"]
 
   # Uncomment to register a new dependency of your gem
 
   # Gem Dependencies
   spec.add_dependency "rake"
+  spec.add_dependency "thor"
 
   # Dev Dependencies
   spec.add_development_dependency "activerecord"
@@ -44,6 +45,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'simplecov'
   spec.add_development_dependency 'awesome_print'
   spec.add_development_dependency "database_cleaner"
+  spec.add_development_dependency "rails", "~> 7.0.6"
+  spec.add_development_dependency "tzinfo-data"
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html
