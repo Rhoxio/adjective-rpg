@@ -1,16 +1,21 @@
 # Module for experience gain
+
+# [String, Integer, Float].map {|t| p t.to_s.downcase}
+
+
 module Adjective
   module Imbibable
+    
     def init_imbibable(args = {}, &block)
       if !Adjective.configuration.use_active_record
-        define_imbibable_instance_variables(imbibable_default_data)
+        define_imbibable_instance_variables(self.default_data)
       end
     end
 
-    def imbibable_default_data
+    def self.default_data
       {
-        experience: 0,
-        level: 1
+        level: 1,
+        total_experience: 0,
       }
     end
 
@@ -19,23 +24,8 @@ module Adjective
         self.class.send(:attr_accessor, key)
         self.instance_variable_set("@#{key.to_s}", value)
       end 
-    end    
-
-    def self.adjective_columns
-      <<-RUBY
-      # Vulnerable Attributes
-      t.integer :total_experience
-      t.integer :level
-      RUBY
     end
 
-    def self.adjective_add_columns(klass)
-      columns = <<-RUBY 
-    # Imbibable Attributes
-    add_column {{klass}}, :total_experience, :integer
-    add_column {{klass}}, :level, :integer
-      RUBY
-      columns.gsub("{{klass}}", ":#{klass.downcase}")
-    end       
+    include Adjective::Migratable      
   end
 end

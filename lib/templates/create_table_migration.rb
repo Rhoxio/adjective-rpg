@@ -34,7 +34,7 @@ module Adjective
     def columns
       @module_classes.map do |mod|
         mod.adjective_columns
-      end.join("\n").chomp
+      end.join("\n      ").chomp
     end
 
     def base_template
@@ -54,7 +54,7 @@ module Adjective
       base
         .gsub("{{migration_class}}", migration_class.lstrip)
         .gsub("{{class_name}}", class_name_sym.lstrip)
-        .gsub("{{create_columns}}", columns.lstrip)
+        .gsub("{{create_columns}}", columns)
         .gsub("{{version}}", @version)
     end     
   end

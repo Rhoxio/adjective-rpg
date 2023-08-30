@@ -1,13 +1,12 @@
 class CreateCharacterWithVulnerableAndImbibable < ActiveRecord::Migration[7.0]
   def change
     create_table :character do |t|
-      # Vulnerable Attributes
+      # Adjective::Vulnerable attributes
       t.integer :hitpoints
       t.integer :max_hitpoints
-
-      # Vulnerable Attributes
-      t.integer :total_experience
+      # Adjective::Imbibable attributes
       t.integer :level
+      t.integer :total_experience
     end
   end
 end

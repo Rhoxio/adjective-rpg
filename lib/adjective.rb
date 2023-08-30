@@ -5,6 +5,7 @@ require "active_record"
 require 'thor'
 require 'awesome_print'
 
+require_relative "modules/internal/migratable"
 require_relative "modules/vulnerable"
 require_relative "modules/imbibable"
 require_relative "utils/string_patches"
