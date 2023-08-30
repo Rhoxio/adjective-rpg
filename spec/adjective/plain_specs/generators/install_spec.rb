@@ -5,7 +5,7 @@ RSpec.describe Adjective do
   }
 
   let(:file_dummy_initializers_path){
-    File.join(file_dummy_root, "/config/initializers")
+    File.join(file_dummy_root, "config/initializers")
   }
 
   let(:file_dummy_config_path){
@@ -13,14 +13,12 @@ RSpec.describe Adjective do
   }
 
   before(:each) do 
-    FileManager.truncate_files(File.join(file_dummy_root, "/config/initializers"))
-    FileManager.truncate_files(file_dummy_root)
+    FileManager.truncate_files(File.join(file_dummy_root, "config/initializers"))
   end
 
-  it "will create the Thorfile and config file" do 
-    output = `thor adjective:setup --config_path #{file_dummy_config_path} --thorfile_path spec/file_dummy`
+  it "will create the config file" do 
+    output = `rake adjective:install -- config_path=#{file_dummy_config_path}`
     expect(File.exist?(File.join(file_dummy_initializers_path, "adjective.rb"))).to eq(true)
-    expect(File.exist?(File.join(file_dummy_root, "Thorfile"))).to eq(true)
   end
 
 end
