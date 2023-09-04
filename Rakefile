@@ -20,6 +20,10 @@ namespace :spec do
   task :rails do
     system("rspec spec/adjective/rails_specs/** --require ./spec/adjective/rails_helper")
   end  
+
+  task :simple do 
+    system("rspec spec/adjective/simple_specs/** --require ./spec/adjective/simple_helper")
+  end
 end
 
 namespace :build do 

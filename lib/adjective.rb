@@ -6,6 +6,7 @@ require 'thor'
 require 'awesome_print'
 
 require_relative "modules/internal/migratable"
+require_relative "modules/internal/ivar_settable"
 require_relative "modules/vulnerable"
 require_relative "modules/imbibable"
 require_relative "utils/string_patches"
@@ -19,9 +20,9 @@ ADJECTIVE_DEFAULT_CONFIG_PATH = "config/initializers/adjective"
 module Adjective
 
   if defined?(Rails)
-    require 'railties' 
-    require_relative "railties"
-    require_relative "generators/setup_generator"
+    # require 'railties' 
+    # require_relative "railties"
+    # require_relative "generators/setup_generator"
     # ActiveSupport.on_load(:active_record) do
     #   extend Adjective::Models
     # end    
@@ -31,6 +32,9 @@ module Adjective
 
   class << self
     attr_accessor :configuration
+    attr_accessor :experience_table
+
+    @experience_table = []
   end
 
   def self.configure
@@ -59,8 +63,8 @@ module Adjective
       @migration_path = "#{root_path}/db/migrate"
       @models_path = "#{root_path}/app/models"      
     end
-
   end
+
 
 end
 
