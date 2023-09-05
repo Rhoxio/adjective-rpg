@@ -156,6 +156,114 @@ RSpec.describe Adjective::Imbibable do
           expect(surrogate.level).to eq(3)
           expect(surrogate.total_experience).to eq(0)
         end
+
+        it "will not set the level above max_level" do 
+          surrogate.grant_levels(99)
+          expect(surrogate.level).to eq(9)
+          expect(surrogate.total_experience).to eq(12800)
+        end
+
+
+      end
+
+      context "#grant_experience" do 
+        it "will grant experience" do 
+          surrogate.grant_experience(99)
+          expect(surrogate.total_experience).to eq(99)
+        end
+
+        it "will automatically level them up" do 
+          surrogate.grant_experience(101)
+
+          expect(surrogate.level).to eq(2)
+        end
+
+        it "will suppress_level_up if option is passed" do 
+          surrogate.grant_experience(100, {suppress_level_up: true})
+          expect(surrogate.total_experience).to eq(100)
+          expect(surrogate.level).to eq(1)
+        end
+
+        it "will set to max_level" do 
+          surrogate.grant_experience(12800)
+          expect(surrogate.level).to eq(9)
+        end
+      end
+
+      context "wiki examples" do 
+        class Character
+          include Adjective::Imbibable
+
+          def initialize
+            init_imbibable
+          end
+        end
+
+        let(:character){
+          Character.new
+        }
+
+        before(:each) do 
+          Adjective.experience_table = [0, 100, 200, 400, 800, 1600, 3200, 6400, 12800]
+        end
+
+        it "level_up? example" do 
+          character.experience = 100
+          expect(character.level_up?).to eq(true)
+        end
+
+        it "level_up! example" do 
+          character.experience = 100
+          character.level_up!
+          expect(character.level).to eq(2)
+        end        
+
+        it "grant_experience example" do 
+          expect(character.total_experience).to eq(0)
+          expect(character.level).to eq(1)
+
+          character.grant_experience(100)
+
+          expect(character.total_experience).to eq(100)
+          expect(character.level).to eq(2)
+        end
+
+        it "experience_to_next_level example" do 
+          character.grant_experience(95)
+          expect(character.experience_to_next_level).to eq(5)
+        end
+
+        it "max_level example" do 
+          character.grant_experience(12800)
+          expect(character.level).to eq(9)
+          expect(character.max_level?).to eq(true)
+        end
+
+        it "set_level example" do 
+          expect(character.level).to eq(1)
+          character.set_level(5)
+          expect(character.level).to eq(5)
+          expect(character.experience).to eq(800)
+
+          # Can also pass :constrain to stop experience from being awarded
+          expect(character.level).to eq(5)
+          character.set_level(8, {constrain: true})
+          expect(character.level).to eq(8)
+          expect(character.experience).to eq(800)
+        end
+
+        it "grant_levels example" do 
+          expect(character.level).to eq(1)
+          character.grant_levels(4)
+          expect(character.level).to eq(5)
+          expect(character.experience).to eq(800)
+
+          # Can also pass :constrain to stop experience from being awarded
+          expect(character.level).to eq(5)
+          character.grant_levels(3, {constrain: true})
+          expect(character.level).to eq(8)
+          expect(character.experience).to eq(800)
+        end
       end
 
 

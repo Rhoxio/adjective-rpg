@@ -1,13 +1,20 @@
 module Adjective
   module Imbibable
 
+    # Remember that 'level' access is index-based. level - 1 gives current level,
+    # level gives the next level.
+
+    # Need to set up a util to see exp thresholds at a given level
+    # Shouls also probably set a module-level override for :constrain
+    # and :suppress_level_up values as an option. 
+
     def max_level?
-      experience_table.length - 1 <= level
+      max_level <= level
     end
 
     def max_level
       experience_table.length
-    end  
+    end
 
     def set_experience_to_level_minimum!
       constrain_experience
@@ -31,6 +38,7 @@ module Adjective
 
     def grant_levels(num, opts = {})
       self.level += num
+      self.level = max_level if self.level > max_level
       constrain_experience unless opts[:constrain] 
     end    
 
@@ -45,7 +53,14 @@ module Adjective
     def experience_to_next_level
       return nil if max_level?
       return experience_table[level] - total_experience
-    end     
+    end  
+
+    def grant_experience(num, opts = {})
+      return 0 if max_level?
+      self.total_experience += num
+      level_up! unless opts[:suppress_level_up]
+      return total_experience
+    end   
 
     # INTERNALS
     
