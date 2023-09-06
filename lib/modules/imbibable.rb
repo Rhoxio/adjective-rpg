@@ -4,9 +4,6 @@ module Adjective
     # Remember that 'level' access is index-based. level - 1 gives current level,
     # level gives the next level.
 
-    # Need to set up a util to see exp thresholds at a given level
-    # Shouls also probably set a module-level override for :constrain
-    # and :suppress_level_up values as an option. 
 
     def max_level?
       max_level <= level
@@ -14,6 +11,10 @@ module Adjective
 
     def max_level
       experience_table.length
+    end
+
+    def exp_at_level(num)
+      experience_table[num - 1]
     end
 
     def set_experience_to_level_minimum!
@@ -39,7 +40,7 @@ module Adjective
     def grant_levels(num, opts = {})
       self.level += num
       self.level = max_level if self.level > max_level
-      constrain_experience unless opts[:constrain] 
+      constrain_experience unless opts[:constrain]
     end    
 
     def constrain_experience
@@ -58,7 +59,7 @@ module Adjective
     def grant_experience(num, opts = {})
       return 0 if max_level?
       self.total_experience += num
-      level_up! unless opts[:suppress_level_up]
+      level_up! unless (opts[:suppress_level_up] || suppress_level_up)
       return total_experience
     end   
 
@@ -70,7 +71,11 @@ module Adjective
       end
 
       @experience_table = args[:experience_table] || Adjective.experience_table
+      @suppress_level_up = args[:suppress_level_up] || false
+      # @constrain_experience = args[:constrain_experience] || false
+
       self.class.send(:attr_accessor, :experience_table)
+      self.class.send(:attr_accessor, :suppress_level_up)
 
       if defined?(Rails) && Adjective.configuration.use_rails
         self.class.send(:alias_attribute, :experience, :total_experience)

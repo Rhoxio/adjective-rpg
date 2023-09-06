@@ -17,6 +17,9 @@ RSpec.describe Adjective::Imbibable do
     it "will gain attributes" do 
       expect(surrogate.level).to eq(1)
       expect(surrogate.total_experience).to eq(0)
+
+      # ap surrogate.suppress_level_up
+      # ap surrogate.constrain_experience
     end
 
     it "will accept a block on initialization" do 
@@ -126,6 +129,11 @@ RSpec.describe Adjective::Imbibable do
         expect(surrogate.experience_to_next_level).to eq(100)
       end
 
+      it "will return #exp_at_level" do 
+        expect(surrogate.exp_at_level(1)).to eq(0)
+        expect(surrogate.exp_at_level(9)).to eq(12800)
+      end
+
       context "#set_level" do 
         it "will set their level" do 
           surrogate.total_experience = 500
@@ -187,6 +195,20 @@ RSpec.describe Adjective::Imbibable do
         it "will set to max_level" do 
           surrogate.grant_experience(12800)
           expect(surrogate.level).to eq(9)
+        end
+
+        it "will allow for the :suppress_level_up option to be used in the module" do 
+          class Dude
+            include Adjective::Imbibable
+            def initialize
+              init_imbibable({suppress_level_up: true})
+            end
+          end
+
+          dude = Dude.new
+          dude.grant_experience(1000)
+          expect(dude.level).to eq(1)
+          expect(dude.total_experience).to eq(1000)
         end
       end
 
