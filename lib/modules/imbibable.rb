@@ -1,10 +1,6 @@
 module Adjective
   module Imbibable
 
-    # Remember that 'level' access is index-based. level - 1 gives current level,
-    # level gives the next level.
-
-
     def max_level?
       max_level <= level
     end

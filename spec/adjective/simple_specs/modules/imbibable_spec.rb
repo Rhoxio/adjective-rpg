@@ -17,9 +17,6 @@ RSpec.describe Adjective::Imbibable do
     it "will gain attributes" do 
       expect(surrogate.level).to eq(1)
       expect(surrogate.total_experience).to eq(0)
-
-      # ap surrogate.suppress_level_up
-      # ap surrogate.constrain_experience
     end
 
     it "will accept a block on initialization" do 
