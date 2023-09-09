@@ -20,6 +20,14 @@ module Adjective
       max_value - current_value
     end
 
+    def full?
+      current_value == max_value
+    end
+
+    def empty?
+      current_value == min_value
+    end
+
     def in_bounds?
       (!underflowed?) && (!overflowed?)
     end
@@ -98,8 +106,11 @@ module Adjective
         self.class.send(:alias_attribute, :manimum, :min_value)        
       else
         self.class.send(:alias_method, :value, :current_value)
+        self.class.send(:alias_method, :value=, :current_value=)
         self.class.send(:alias_method, :maximum, :max_value)
+        self.class.send(:alias_method, :maximum=, :max_value=)
         self.class.send(:alias_method, :minimum, :min_value)
+        self.class.send(:alias_method, :minimum=, :min_value=)
       end
 
       yield(self) if block_given?

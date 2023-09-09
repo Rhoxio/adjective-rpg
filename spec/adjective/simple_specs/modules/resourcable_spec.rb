@@ -94,7 +94,19 @@ RSpec.describe Adjective::Resourcable do
       end
     end
 
-    context "mathematical operactions" do 
+    context "mathematical operations" do 
+      it "will check if #full?" do 
+        mana.max_value = 100
+        mana.current_value = 100
+        expect(mana.full?).to eq(true)
+      end
+
+      it "will check if #empty?" do 
+        mana.max_value = 100
+        mana.current_value = 0
+        expect(mana.empty?).to eq(true)
+      end      
+
       it "will calculate #missing" do 
         mana.current_value = 50
         mana.max_value = 100
@@ -158,6 +170,39 @@ RSpec.describe Adjective::Resourcable do
       end
     end
    
+  end
+
+  describe "doc examples" do 
+    class ManaUser
+      attr_accessor :mana
+      
+      include Adjective::Imbibable
+
+      def initialize
+        @mana = Mana.new
+        init_imbibable
+      end
+    end
+
+    let(:mana_user){
+      ManaUser.new
+    }
+
+    it "wont freak out with the new character class" do 
+      expect(mana_user.mana.is_a?(Mana)).to eq(true)
+    end
+
+    it "will show basic mana values" do 
+      expect(mana_user.mana.value).to eq(0)
+    end
+
+    it "gives me the rightpercentage for the add/subtract one" do 
+      mana_user.mana.value = 10
+      mana_user.mana.maximum = 200
+      expect(mana_user.mana.add_percent(15)).to eq(23)
+    end
+
+
   end
 
 end
