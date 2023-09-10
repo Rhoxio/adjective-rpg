@@ -105,7 +105,7 @@ RSpec.describe Adjective::Resourcable do
         mana.max_value = 100
         mana.current_value = 0
         expect(mana.empty?).to eq(true)
-      end      
+      end
 
       it "will calculate #missing" do 
         mana.current_value = 50

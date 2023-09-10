@@ -29,7 +29,7 @@ module Adjective
     end
 
     def in_bounds?
-      (!underflowed?) && (!overflowed?)
+      !underflowed? && !overflowed?
     end
 
     def underflowed?
@@ -102,13 +102,20 @@ module Adjective
 
       if defined?(Rails) && Adjective.configuration.use_rails
         self.class.send(:alias_attribute, :value, :current_value)
+        self.class.send(:alias_attribute, :value=, :current_value=)
+
         self.class.send(:alias_attribute, :maximum, :max_value)
-        self.class.send(:alias_attribute, :manimum, :min_value)        
+        self.class.send(:alias_attribute, :maximum=, :max_value=)
+
+        self.class.send(:alias_attribute, :minimum, :min_value)
+        self.class.send(:alias_attribute, :minimum=, :min_value=)
       else
         self.class.send(:alias_method, :value, :current_value)
         self.class.send(:alias_method, :value=, :current_value=)
+
         self.class.send(:alias_method, :maximum, :max_value)
         self.class.send(:alias_method, :maximum=, :max_value=)
+        
         self.class.send(:alias_method, :minimum, :min_value)
         self.class.send(:alias_method, :minimum=, :min_value=)
       end
