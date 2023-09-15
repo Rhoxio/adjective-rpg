@@ -1,6 +1,8 @@
 module Adjective
   module Capacitable
 
+    CAP_PROCS = Adjective.registered_procs[:capacitable]
+
     def collection
       self.public_send(collection_ref)
     end

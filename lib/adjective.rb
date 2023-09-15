@@ -5,6 +5,7 @@ require "active_record"
 require 'thor'
 require 'awesome_print'
 
+require_relative "procs/capacitable_procs"
 require_relative "modules/internal/migratable"
 require_relative "modules/internal/ivar_settable"
 require_relative "modules/vulnerable"
@@ -35,6 +36,7 @@ module Adjective
   class << self
     attr_accessor :configuration
     attr_accessor :experience_table
+    attr_accessor :callable
 
     @experience_table = []
   end
@@ -42,6 +44,15 @@ module Adjective
   def self.configure
     self.configuration ||= Configuration.new
     yield(configuration) if block_given?
+  end
+
+  def self.register_procs
+    self.callable ||= Callable.new
+    yield(callable) if block_given?
+  end
+
+  def self.registered_procs
+    callable.namespaces
   end
 
   class Configuration
@@ -65,6 +76,30 @@ module Adjective
       @migration_path = "#{root_path}/db/migrate"
       @models_path = "#{root_path}/app/models"      
     end
+  end
+
+  class Callable
+    attr_accessor :namespaces
+
+    def initialize
+      @namespaces = {}
+      namespaces[:capacitable] = Adjective::CapacitableProcs.all
+    end
+
+    # The idea behind namespacing this is so they know which procs
+    # apply to which context, as the arguments passed to 
+    # the proc itself if dependent on it. 
+
+    # They should be able to provide their own and override the namespaced
+    # hashes alrady present if they want to. 
+    # Might want to show a warning about this, but hey should also be able to disable the 
+    # warning by setting a flag in the Adjective.register_procs block. 
+    def namespace(given_namespace, &block)
+      namespaces[given_namespace] = {} unless namespaces.key?(given_namespace)
+      namespace = namespaces[given_namespace]
+      yield(namespace) if block_given?
+    end
+
   end
 
 
