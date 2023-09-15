@@ -2,7 +2,6 @@
 
 require_relative "version"
 require "active_record"
-require 'thor'
 require 'awesome_print'
 
 require_relative "procs/capacitable_procs"

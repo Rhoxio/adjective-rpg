@@ -8,6 +8,10 @@ RSpec.describe Adjective::Callable do
     end    
   }
 
+  let(:bag){
+    Bag.new
+  }  
+
   describe "setup" do 
     it "will set custom procs to namespaced values" do 
       Adjective.register_procs do |register|
@@ -27,7 +31,7 @@ RSpec.describe Adjective::Callable do
     end
 
     it "will allow for procs to be used in Adjective-specific modules by default" do 
-      
+      expect(bag.capacitable_strategies.key?(:find_one)).to eq(true)
     end
   end
 
