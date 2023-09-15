@@ -9,7 +9,7 @@ module Adjective
       self.public_send("#{collection_ref}=", array)
     end
 
-    def query(args = {strategy: nil, accessor: nil, term: "", custom_strategy: nil})
+    def query(args = {strategy: nil, ref: nil, term: "", custom_strategy: nil})
       given_strategy = capacitable_strategies[args[:strategy]] if !args[:custom_strategy]
       given_strategy = args[:custom_strategy] if args[:custom_strategy]
       matches = given_strategy.call(self, args)
@@ -27,7 +27,6 @@ module Adjective
       if !Adjective.configuration.use_active_record
         define_capacitable_instance_variables({collection_ref: access_method})
       end      
-      # @capacitable_access_method = access_method
     end   
 
     def define_capacitable_instance_variables(args)

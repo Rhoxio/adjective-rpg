@@ -85,14 +85,14 @@ module Adjective
       namespaces[:capacitable] = Adjective::CapacitableProcs.all
     end
 
-    # The idea behind namespacing this is so they know which procs
-    # apply to which context, as the arguments passed to 
-    # the proc itself if dependent on it. 
-
     # They should be able to provide their own and override the namespaced
     # hashes alrady present if they want to. 
+    
     # Might want to show a warning about this, but hey should also be able to disable the 
     # warning by setting a flag in the Adjective.register_procs block. 
+
+    # Need to set this up so values in the namespace get merged with values from
+    # the args inside of the same defined namespace.
     def namespace(given_namespace, &block)
       namespaces[given_namespace] = {} unless namespaces.key?(given_namespace)
       namespace = namespaces[given_namespace]
