@@ -19,6 +19,11 @@ RSpec.describe Adjective::Capacitable do
   end
 
   describe "initialization" do 
+    it "will define expected defaults" do 
+      expect(bag.max_slots).to eq(20)
+      expect(bag.baseline_weight).to eq(0)
+    end
+
     it "will define #access" do 
       expect(bag.collection).to eq(bag.storage)
     end
@@ -26,6 +31,48 @@ RSpec.describe Adjective::Capacitable do
     it "will define #replace_all" do 
       expect(bag.replace_all!([1,2])).to eq([1,2])
     end
+
+    it "will allow for max_slots option to be passed" do 
+      bag.init_capacitable(:storage, {max_slots: 10})
+      expect(bag.max_slots).to eq(10)
+    end
+
+    it "will allow for baseline_weight to be set" do 
+      # Basically if they want the bag to weigh something.
+      bag.init_capacitable(:storage, {baseline_weight: 1})
+      expect(bag.baseline_weight).to eq(1)
+    end
+
+    it "will accept a block" do 
+      bag.init_capacitable(:storage) do |b|
+        expect(b).to eq(bag)
+        b.max_slots = 25
+        b.baseline_weight = 1
+      end
+
+      expect(bag.max_slots).to eq(25)
+      expect(bag.baseline_weight).to eq(1)
+    end
+  end
+
+  describe "storage slots" do 
+    it "will detect if storage has slots open or is full" do 
+      17.times do 
+        bag.storage << rock
+      end
+      expect(bag.has_space?).to eq(true)
+      bag.storage << rock
+      expect(bag.has_space?).to eq(false)
+    end
+
+    it "will calculate the #remaining_slots" do 
+      10.times do 
+        bag.storage << rock
+      end      
+      expect(bag.remaining_slots).to eq(8)
+    end
+
+    
   end
 
   describe "querying" do 

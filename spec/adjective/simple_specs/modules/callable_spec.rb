@@ -8,6 +8,12 @@ RSpec.describe Adjective::Callable do
     end    
   }
 
+  let(:any_proc){
+    Proc.new do
+      :any
+    end
+  }
+
   let(:bag){
     Bag.new
   }  
@@ -18,11 +24,18 @@ RSpec.describe Adjective::Callable do
         register.namespace(:global) do |namespace|
           namespace[:find_one] = find_one_proc
         end
+
+        register.namespace(:random) do |namespace|
+          namespace[:any] = any_proc
+        end
       end
 
       expect(Adjective.registered_procs.key?(:global)).to eq(true)
       expect(Adjective.registered_procs[:global].key?(:find_one)).to eq(true)
       expect(Adjective.registered_procs[:global][:find_one]).to eq(find_one_proc)
+      
+      expect(Adjective.registered_procs.key?(:random)).to eq(true)
+      expect(Adjective.registered_procs[:random].key?(:any)).to eq(true)
     end
 
     it "will load default procs" do 

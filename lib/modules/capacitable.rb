@@ -16,6 +16,24 @@ module Adjective
       return matches
     end
 
+    def store(items)
+      items = Array(items)
+
+      # collection << item if 
+    end
+
+    def has_space?
+      collection.length < max_slots  
+    end
+
+    def remaining_slots
+      max_slots - collection.length
+    end
+
+    def filled_slots
+      
+    end
+
     # INTERNALS
 
     def self.default_data
@@ -25,7 +43,14 @@ module Adjective
 
     def init_capacitable(access_method, args = {}, &block)
       if !Adjective.configuration.use_active_record
-        define_capacitable_instance_variables({collection_ref: access_method})
+        max_slots = args[:max_slots] || 20
+        baseline_weight = args[:baseline_weight] || 0
+        define_capacitable_instance_variables({ 
+          collection_ref: access_method,
+          max_slots: max_slots,
+          baseline_weight: baseline_weight
+        })
+        yield(self) if block_given?
       end      
     end   
 
