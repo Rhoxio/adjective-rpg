@@ -83,20 +83,36 @@ module Adjective
     # Also need to account for unlimited length bag... maybe? 
     # If the bag is infintely large, just add another nil to the end of the 
     # array. Since items are added one at a time, this would make some sense.
-    # Or, just add nils based on the number of elements passed in before assignment.
-    # Thats probably the ticket right there...
     def store(items)
       items = Array(items)
+      has_room = remaining_space - items.length >= 0
 
-      # If array is not full...
-      items.each do |item|
-        collection_origin << item
-        nil_index = collection.index(nil)
-        struct = slot_struct.new(item, nil_index, 1)
-        collection[nil_index] = struct
-        collection << nil unless collection.include?(nil)
+      if has_room
+        items.each do |item|
+          collection_origin << item
+          nil_index = collection.index(nil)
+          struct = slot_struct.new(item, nil_index, 1)
+          collection[nil_index] = struct
+          if infinite
+            collection << nil unless collection.include?(nil)
+          end
+        end
+      else
+        raise ArgumentError, "Provided array exceeds max_slots if applied. remaining_space: #{remaining_space}, provided array Length: #{items.length}"
       end
       build_simple_collection!
+    end
+
+    def move(target_index, slot)
+      target = collection[target_index]
+      destination = collection[slot]
+
+      collection[slot] = target
+      collection[slot].position = slot unless collection[slot].nil?
+
+      collection[target_index] = destination
+      collection[target_index].position = target_index unless collection[target_index].nil?
+      return collection
     end
 
     def space_used
@@ -114,7 +130,17 @@ module Adjective
     end
 
     def filled_slots
+      collection.map.with_index do |struct, index|
+        next if struct.nil?
+        index
+      end.compact
+    end
 
+    def empty_slots
+      collection.map.with_index do |struct, index|
+        next unless struct.nil?
+        index
+      end.compact
     end
 
     # INTERNALS

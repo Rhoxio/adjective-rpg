@@ -96,6 +96,32 @@ RSpec.describe Adjective::Capacitable do
       expect(bag.remaining_space).to eq(Float::INFINITY)
     end
 
+    it "will give back the indexes of slots with items in them" do 
+      expect(bag.filled_slots).to eq([0,1])
+    end
+
+    it "will correctly pull slots for stacked items" do 
+      bag.init_capacitable(:storage, {stacked: true})
+      18.times { bag.store(rock) }
+      expect(bag.filled_slots).to eq([0,1])
+    end
+
+    it "will give back the correct empty slots" do 
+      expect(bag.empty_slots).to eq((2..19).to_a)
+    end
+
+    it "will give back empty slots for stacked items" do 
+      bag.init_capacitable(:storage, {stacked: true})
+      18.times { bag.store(rock) }      
+      expect(bag.empty_slots).to eq((2..19).to_a)
+    end
+
+    it "will not shit out if empty_slots is caled with :infiite" do 
+      bag.init_capacitable(:storage, {infinite: true})
+      18.times { bag.store(rock) }  
+      expect(bag.empty_slots).to eq([20])
+    end
+
   end
 
   describe "storing" do 
@@ -127,6 +153,12 @@ RSpec.describe Adjective::Capacitable do
       bag.store([rock, letter, rock, rock])
       expect(bag.collection.find{|struct| struct.item.name == "Rock"}.stack_size).to eq(7)
       expect(bag.collection.find{|struct| struct.item.name == "Letter"}.stack_size).to eq(3)
+    end
+
+    it "will throw an error if too many items are supplied" do 
+      rocks = []
+      20.times {rocks << rock}
+      expect{bag.store(rocks)}.to raise_error(ArgumentError)
     end
 
     context "infinite" do 
@@ -164,6 +196,34 @@ RSpec.describe Adjective::Capacitable do
 
   end
 
+  describe "moving/swapping" do 
+    it "will correctly swap positions" do 
+      rock_index = bag.collection.find_index {|struct| struct.item.name == "Rock" }
+      last_index = bag.collection.length - 1
+      bag.move(rock_index, last_index)
+      expect(bag.collection.last.item.name).to eq("Rock")
+      expect(bag.collection.first).to eq(nil)
+    end
+
+    it "will correctly swap slots for stacked items" do 
+      bag.init_capacitable(:storage, {stacked: true})
+      rock_index = bag.collection.find_index {|struct| struct.item.name == "Rock" }
+      last_index = bag.collection.length - 1
+      bag.move(rock_index, last_index)
+      expect(bag.collection.last.item.name).to eq("Rock")
+      expect(bag.collection.first).to eq(nil)
+    end
+
+    it "will correctly swap position attributes" do 
+      rock_index = bag.collection.find_index {|struct| struct.item.name == "Rock" }
+      last_index = bag.collection.length - 1
+      bag.move(rock_index, last_index) 
+      
+      expect(bag.collection[last_index].position).to eq(last_index)
+      expect(bag.collection[rock_index]).to eq(nil)
+    end
+  end
+
   describe "serialization" do 
 
     before(:each) do 
@@ -184,17 +244,13 @@ RSpec.describe Adjective::Capacitable do
         expect(bag.collection[1].stack_size).to eq(4)
       end
 
-      it "will not stack items unless #stack_items! is set" do 
+      it "will not stack items unless :stacked is set" do 
         bag.init_capacitable(:storage, {stacked: false})
         expect(bag.collection.find{|struct| struct.item.name == "Rock"}.stack_size).to eq(1)
         expect(bag.collection.find{|struct| struct.item.name == "Letter"}.stack_size).to eq(1)
       end
     end
 
-    it "will sandbox for me" do 
-      
-      # ap bag.stack_items!
-    end
   end
 
   # describe "querying" do 
