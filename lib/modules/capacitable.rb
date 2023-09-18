@@ -1,6 +1,13 @@
 module Adjective
   module Capacitable
 
+    # TODO: Resolve position collisions if they exist. Take the deepest element
+    # and just stick it in the next available nil shot. If no nil slot, throw an error
+    # 
+    # Get procs working again
+    # Set up utilities for pulling index values, maybe a proc or just a standard method?
+    # Add AR support - strict table declarations with correctly passed accessor method
+
     def collection_origin
       self.public_send(collection_ref)
     end
@@ -79,10 +86,6 @@ module Adjective
       return matches
     end
 
-    # TODO: Add in the check to make sure that all of the items will fit.
-    # Also need to account for unlimited length bag... maybe? 
-    # If the bag is infintely large, just add another nil to the end of the 
-    # array. Since items are added one at a time, this would make some sense.
     def store(items)
       items = Array(items)
       has_room = remaining_space - items.length >= 0
