@@ -98,17 +98,17 @@ module Adjective
           end
         end
       else
-        raise ArgumentError, "Provided array exceeds max_slots if applied. remaining_space: #{remaining_space}, provided array Length: #{items.length}"
+        raise ArgumentError, "Provided array exceeds max_slots if applied. remaining_space: #{remaining_space}, provided array length: #{items.length}"
       end
       build_simple_collection!
     end
 
-    def move(target_index, slot)
+    def move(target_index, destination_index)
       target = collection[target_index]
-      destination = collection[slot]
+      destination = collection[destination_index]
 
-      collection[slot] = target
-      collection[slot].position = slot unless collection[slot].nil?
+      collection[destination_index] = target
+      collection[destination_index].position = destination_index unless collection[destination_index].nil?
 
       collection[target_index] = destination
       collection[target_index].position = target_index unless collection[target_index].nil?
