@@ -1,8 +1,71 @@
 module Adjective
   module Capacitable
 
-    def collection
+    def collection_origin
       self.public_send(collection_ref)
+    end
+
+    def build_simple_collection!
+      pulled = self.public_send(collection_ref)
+
+      slot_count = infinite ? pulled.length + 1 : max_slots
+      filled_array = Array.new(slot_count, nil)
+      
+      pulled.each_with_index do |item, index|
+        position = item.respond_to?(:position) ? item.position : index
+        # Have to stack after construction and replace duplicates with nils
+        filled_array[position] = slot_struct.new(item, position, 1)
+      end 
+
+      self.collection = filled_array
+
+      stack_items! if stacked
+      collection
+    end
+
+    def stack_items!
+      unique_objects = collection.compact.map{|entry| entry.item}.uniq
+      unique_objects.each do |obj|
+
+        applicable_indexes = []
+        targeted_structs = collection.select.with_index do |struct, index| 
+          next if struct.nil?
+          found = struct.item == obj
+          applicable_indexes.push(index) if found
+          found
+        end
+
+        count = 0
+        targeted_structs.each do |struct|
+          count += 1 if struct.stack_size.nil? 
+          count += struct.stack_size if struct.stack_size
+        end
+
+        # Need to select the right struct and set the stack_size for the set now..
+        target_index = nil
+        main_stack = collection.find.with_index do |struct, index|
+          next if struct.nil?
+          found = struct.item == obj
+          target_index = index if found
+          found
+        end
+
+        main_stack.stack_size = count unless obj.nil?
+        main_stack.position = target_index
+
+        applicable_indexes.delete(target_index)
+        applicable_indexes.each {|idx| collection[idx] = nil }
+      end
+
+      return collection
+    end
+
+    def active_record_collection
+      # going to require some method call expectations and assumed attributes
+    end
+
+    def slot_struct
+      Struct.new(:item, :position, :stack_size)
     end
 
     def replace_all!(array)
@@ -16,22 +79,42 @@ module Adjective
       return matches
     end
 
+    # TODO: Add in the check to make sure that all of the items will fit.
+    # Also need to account for unlimited length bag... maybe? 
+    # If the bag is infintely large, just add another nil to the end of the 
+    # array. Since items are added one at a time, this would make some sense.
+    # Or, just add nils based on the number of elements passed in before assignment.
+    # Thats probably the ticket right there...
     def store(items)
       items = Array(items)
 
-      # collection << item if 
+      # If array is not full...
+      items.each do |item|
+        collection_origin << item
+        nil_index = collection.index(nil)
+        struct = slot_struct.new(item, nil_index, 1)
+        collection[nil_index] = struct
+        collection << nil unless collection.include?(nil)
+      end
+      build_simple_collection!
+    end
+
+    def space_used
+      collection.compact.map {|item| item.stack_size }.inject(:+)
     end
 
     def has_space?
-      collection.length < max_slots  
+      return true if infinite
+      return space_used < max_slots  
     end
 
-    def remaining_slots
-      max_slots - collection.length
+    def remaining_space
+      return Float::INFINITY if infinite
+      max_slots - space_used
     end
 
     def filled_slots
-      
+
     end
 
     # INTERNALS
@@ -43,15 +126,21 @@ module Adjective
 
     def init_capacitable(access_method, args = {}, &block)
       if !Adjective.configuration.use_active_record
-        max_slots = args[:max_slots] || 20
-        baseline_weight = args[:baseline_weight] || 0
-        define_capacitable_instance_variables({ 
+        define_capacitable_instance_variables({
+          infinite: args[:infinite] || false,
           collection_ref: access_method,
-          max_slots: max_slots,
-          baseline_weight: baseline_weight
+          max_slots: args[:max_slots] || 20,
+          baseline_weight: args[:baseline_weight] || 0,
+          stacked: args[:stacked] || false
         })
-        yield(self) if block_given?
-      end      
+      end
+
+      self.class.send(:attr_accessor, :collection)
+      self.instance_variable_set("@collection", Array.new(self.max_slots, nil))     
+
+      self.build_simple_collection!
+
+      yield(self) if block_given?      
     end   
 
     def define_capacitable_instance_variables(args)
