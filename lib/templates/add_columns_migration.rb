@@ -30,7 +30,7 @@ module Adjective
     def attribute_up_fields
       @module_classes.map do |mod|
         mod.adjective_add_columns(@class_name)
-      end.join("\n").chomp
+      end.join("\n    ").chomp
     end
 
     def attribute_down_fields
@@ -55,7 +55,7 @@ module Adjective
       base = base_template
       base
         .gsub("{{migration_class}}", migration_class.lstrip)
-        .gsub("{{add_methods}}", attribute_up_fields.lstrip)
+        .gsub("{{add_methods}}", attribute_up_fields)
         .gsub("{{remove_methods}}", attribute_down_fields.lstrip)
         .gsub("{{version}}", @version)
     end

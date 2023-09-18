@@ -16,19 +16,19 @@ RSpec.configure do |config|
     require_relative '../dummy/config/environment'
 
     # Get the database configuration
-    db_config = Rails.application.config.database_configuration[Rails.env]
+    # db_config = Rails.application.config.database_configuration[Rails.env]
 
-    # Drop the existing database
-    ActiveRecord::Base.establish_connection(db_config.except('database'))
-    ActiveRecord::Base.connection.drop_database(db_config['database'])
+    # # Drop the existing database
+    # ActiveRecord::Base.establish_connection(db_config.except('database'))
+    # ActiveRecord::Base.connection.drop_database(db_config['database'])
 
-    # Recreate the database
-    ActiveRecord::Base.connection.create_database(db_config['database'])
+    # # Recreate the database
+    # ActiveRecord::Base.connection.create_database(db_config['database'])
 
-    # Re-establish connection and migrate the database
-    ActiveRecord::Base.establish_connection(db_config)
-    # ActiveRecord::Tasks::DatabaseTasks.load_schema(:ruby, ENV['SCHEMA'])
-    ActiveRecord::MigrationContext.new('../dummy/db/migrate').migrate
+    # # Re-establish connection and migrate the database
+    # ActiveRecord::Base.establish_connection(db_config)
+    # # ActiveRecord::Tasks::DatabaseTasks.load_schema(:ruby, ENV['SCHEMA'])
+    # ActiveRecord::MigrationContext.new('../dummy/db/migrate').migrate
   end 
 
   # Enable flags like --only-failures and --next-failure
