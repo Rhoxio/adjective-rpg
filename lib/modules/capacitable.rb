@@ -4,6 +4,8 @@ module Adjective
     # Get procs working again
     # Set up utilities for pulling index values, maybe a proc or just a standard method?
     # removal/transfer between inventories
+    # restack! functionality. should restack all identity items in structs
+    # restack_item(obj), restacks a certain item signature
     # Add AR support - strict table declarations with correctly passed accessor method
 
     # Resolve position collisions if they exist with AR models. Take the deepest element
