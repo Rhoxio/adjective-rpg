@@ -50,6 +50,13 @@ RSpec.describe Adjective::Capacitable do
       expect(bag.max_slots).to eq(25)
       expect(bag.baseline_weight).to eq(1)
     end
+
+    it "will not error out if an empty collection is supplied" do 
+      bag.storage = []
+      bag.init_capacitable(:storage)
+      expect(bag.collection.compact.length).to eq(0)
+      expect(bag.collection.length).to eq(bag.max_slots)
+    end    
   end
 
   describe "storage slots" do 
@@ -192,35 +199,72 @@ RSpec.describe Adjective::Capacitable do
         expect(bag.collection.find{|struct| struct.item.name == "Letter"}.stack_size).to eq(1)
       end
     end
-
-
   end
 
   describe "moving/swapping" do 
-    it "will correctly swap positions" do 
+    it "will correctly move positions" do 
       rock_index = bag.collection.find_index {|struct| struct.item.name == "Rock" }
       last_index = bag.collection.length - 1
-      bag.move(rock_index, last_index)
+      bag.move(target_index: rock_index, destination_index: last_index)
       expect(bag.collection.last.item.name).to eq("Rock")
       expect(bag.collection.first).to eq(nil)
     end
 
-    it "will correctly swap slots for stacked items" do 
+    it "will correctly move slots for stacked items" do 
       bag.init_capacitable(:storage, {stacked: true})
       rock_index = bag.collection.find_index {|struct| struct.item.name == "Rock" }
       last_index = bag.collection.length - 1
-      bag.move(rock_index, last_index)
+      bag.move(target_index: rock_index, destination_index: last_index)
       expect(bag.collection.last.item.name).to eq("Rock")
       expect(bag.collection.first).to eq(nil)
     end
 
-    it "will correctly swap position attributes" do 
+    it "will correctly move position attributes" do 
       rock_index = bag.collection.find_index {|struct| struct.item.name == "Rock" }
       last_index = bag.collection.length - 1
-      bag.move(rock_index, last_index) 
+      bag.move(target_index: rock_index, destination_index: last_index)
       
       expect(bag.collection[last_index].position).to eq(last_index)
       expect(bag.collection[rock_index]).to eq(nil)
+    end
+
+    it "will stack items when using #move if they share the same item signature" do 
+      bag.init_capacitable(:storage, {stacked: true})
+      5.times { bag.store(rock) }
+      bag.split_stack(target_index: 0, destination_index: 3, amount: 2)
+      expect(bag.collection[0].stack_size).to eq(4)
+      bag.move(target_index: 3, destination_index: 0)
+      expect(bag.collection[0].stack_size).to eq(6)
+    end
+
+    it "will correctly #split_stack" do 
+      bag.init_capacitable(:storage, {stacked: true})
+      5.times { bag.store(rock) }
+      bag.split_stack(target_index: 0, destination_index: 3, amount: 2)
+      expect(bag.collection[3].stack_size).to eq(2)
+    end
+
+    it "will not restack after adding another item" do 
+      bag.init_capacitable(:storage, {stacked: true})
+      5.times { bag.store(rock) }
+      bag.split_stack(target_index: 0, destination_index: 3, amount: 2)
+      bag.store(rock)      
+      expect(bag.collection[3].stack_size).to eq(2)
+      expect(bag.collection[0].stack_size).to eq(5)
+    end
+
+    it "will combine stacks of items" do 
+      bag.init_capacitable(:storage, {stacked: true})
+      5.times { bag.store(rock) }
+      bag.split_stack(target_index: 0, destination_index: 3, amount: 2)
+      bag.combine_stacks(target_index: 0, destination_index: 3)
+      expect(bag.collection[0].nil?).to eq(true)
+      expect(bag.collection[3].stack_size).to eq(6)
+    end
+
+    it "will not attempt to combine nil inventory slots" do 
+      bag.init_capacitable(:storage, {stacked: true})
+      expect(bag.combine_stacks(target_index: 18, destination_index: 19)).to eq(false)
     end
   end
 
@@ -237,7 +281,6 @@ RSpec.describe Adjective::Capacitable do
     end
 
     context "stacking" do 
-
       it "will stack items based on total occurences" do 
         bag.init_capacitable(:storage, {stacked: true})
         expect(bag.collection[0].stack_size).to eq(11)
@@ -250,6 +293,17 @@ RSpec.describe Adjective::Capacitable do
         expect(bag.collection.find{|struct| struct.item.name == "Letter"}.stack_size).to eq(1)
       end
     end
+
+    # This technically only makes sense with AR implemented...
+    # The internal representation should mirror this correctly
+    # if no AR is present and the join table isn't pulled.
+    # context "reasonable default movement" do 
+    #   it "will move duplicate position to nearest nil" do
+    #     bag.init_capacitable(:storage)
+    #     5.times { bag.store(rock) }
+    #     ap bag.collection
+    #   end
+    # end
 
   end
 
