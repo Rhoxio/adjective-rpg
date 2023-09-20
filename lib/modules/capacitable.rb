@@ -2,10 +2,10 @@ module Adjective
   module Capacitable
 
     # Get procs working again
-    # Set up utilities for pulling index values, maybe a proc or just a standard method?
-    # removal/transfer between inventories
+
     # restack! functionality. should restack all identity items in structs
     # restack_item(obj), restacks a certain item signature
+    # review return values - some of them seem a little jank as defaults
     # Add AR support - strict table declarations with correctly passed accessor method
 
     # Resolve position collisions if they exist with AR models. Take the deepest element
@@ -53,7 +53,9 @@ module Adjective
         # safe-operator checking it. If I don't, the last step can mess it all up and
         # set a nil position which isn't an expectation anywhere except for on
         # the initial build... and even then it's not a default. It comes from a reliable
-        # source... the indexes of the array. I guess this makes sense as a check
+        # source... the indexes of the array or the position itself. It's not guarnanteed to
+        # be correct coming out of their db though...
+        # I guess this makes sense as a check
         # against tampering on the collection from the outside?
         exempted_indexes = [main_stack&.position]
 
@@ -75,7 +77,7 @@ module Adjective
     end
 
     def restack!
-
+      # TODO
     end
 
     def find_by_item(object)
@@ -122,6 +124,18 @@ module Adjective
         raise ArgumentError, "Provided array exceeds max_slots if applied. remaining_space: #{remaining_space}, provided array length: #{items.length}"
       end
       stack_items! if stacked
+      return collection
+    end
+
+    def extract(target_indexes)
+      indexes = Array(target_indexes)
+      selected = collection.select do |struct|
+        next if struct.nil?
+        indexes.include?(struct.position)
+      end
+        
+      indexes.each {|idx| collection[idx] = nil}
+      return selected
     end
 
     def move(target_index:, destination_index:)
