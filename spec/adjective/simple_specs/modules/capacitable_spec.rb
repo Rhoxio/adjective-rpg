@@ -203,7 +203,7 @@ RSpec.describe Adjective::Capacitable do
 
   describe "extracting" do 
     it "will extract an item" do 
-      item_to_be_removed = bag.collection[0]
+      item_to_be_removed = bag.collection[0].item
       expect(bag.extract(0)[0]).to eq(item_to_be_removed)
     end
 
@@ -213,7 +213,7 @@ RSpec.describe Adjective::Capacitable do
 
     it "will extract stacks" do 
       bag.init_capacitable(:storage, {stacked: true})
-      item_to_be_removed = bag.collection[0]
+      item_to_be_removed = bag.collection[0].item
       expect(bag.extract(0)[0]).to eq(item_to_be_removed)
     end
   end

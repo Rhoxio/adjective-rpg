@@ -135,7 +135,7 @@ module Adjective
       end
         
       indexes.each {|idx| collection[idx] = nil}
-      return selected
+      return selected.map{|struct| struct.item}
     end
 
     def move(target_index:, destination_index:)
