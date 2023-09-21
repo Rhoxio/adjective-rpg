@@ -14,6 +14,73 @@ module Adjective
     # a text file or something, but I think having it follow AR object definitions is better.
     # Punting until I get AR examples and figure out how I want the data in.
 
+    # Ok, so I need to set it up so the struct gets initialized 1:1 if the join table is
+    # present. If there's no join table/reference present, build from defaults (as it is now).
+    # I think I just need a different method for it. It doesnt feel clean sticking it all into 
+    # conditional statement hell there
+
+    # I have a feeling that the auto-load issue is more of an object
+    # instatiation thing. I think it needs to go into an included block?
+
+    # I think defining the AR callbacks in the included block makes sense?
+    # I could have them define methods instead of passing opts... I guess?
+    # This does make more sense. They have open options to define specific return values
+    # and can assign things directly if the need arises. As long as the method exists and returns
+    # the right value, it does make sense to do it this way versus having it be a static opts def...
+    # This even means that they can set up tables in thair db to help with this if they want to.
+    # This does make more sense, but it feels awkward. I guess it's just a matter of seeing if I can get
+    # it working correctly.
+
+    # Ok, now theres an issue with init_cap not being called. It doesn't know what defaults to use.
+    # This can be easily solved with a singleton method on the superclass that defines the data it needs.
+    # It should all be static anyway I think...
+
+    # I think the config method strategy is actaully way better - not gonna lie.
+    # The only caveat will be that any code called in it will need to be done AFTER init
+    # no matter what for the AR cases.
+
+    def self.included(base)
+      if Adjective.configuration.use_active_record
+        base.class_eval do 
+          after_initialize do
+            # settings = {
+            #   data_ref: base.public_send(base.data_ref),
+            #   item_accessor: base.public_send(base.item_accessor)
+            # }
+            # init_capacitable(:items, settings)
+            build_collection!
+          end  
+
+          after_find do
+            # settings = {
+            #   data_ref: base.public_send(base.data_ref),
+            #   item_accessor: base.public_send(base.item_accessor)
+            # }
+            # init_capacitable(:items, settings)
+            build_collection!
+          end
+
+          after_update do
+            # settings = {
+            #   data_ref: base.public_send(base.data_ref),
+            #   item_accessor: base.public_send(base.item_accessor)
+            # }
+            # init_capacitable(:items, settings)
+            build_collection!
+          end  
+
+          after_create do
+            # settings = {
+            #   data_ref: base.public_send(base.data_ref),
+            #   item_accessor: base.public_send(base.item_accessor)
+            # }
+            # init_capacitable(:items, settings)
+            build_collection!
+          end 
+        end
+      end
+    end
+
     def collection_origin
       self.public_send(collection_ref)
     end
@@ -32,6 +99,22 @@ module Adjective
       self.collection = filled_array
 
       stack_items! if stacked
+      collection
+    end
+
+    def build_collection!
+      pulled = self.public_send(self.public_send(:data_ref))
+      slot_count = infinite ? pulled.length + 1 : max_slots
+      filled_array = Array.new(slot_count, nil)
+
+      pulled.each_with_index do |data, index|
+        position = (data.respond_to?(:position) && !data&.position.nil?) ? data.position : index
+        filled_array[position] = slot_struct.new(data.public_send(self.public_send(:item_accessor)), position, 1)
+      end
+
+      ap "running the build thing"
+      self.collection = filled_array
+      ap self.collection
       collection
     end
 
@@ -214,20 +297,33 @@ module Adjective
     end
 
     def init_capacitable(access_method, args = {}, &block)
-      if !Adjective.configuration.use_active_record
-        define_capacitable_instance_variables({
-          infinite: args[:infinite] || false,
-          collection_ref: access_method,
-          max_slots: args[:max_slots] || 20,
-          baseline_weight: args[:baseline_weight] || 0,
-          stacked: args[:stacked] || false
-        })
-      end
+
+      define_capacitable_instance_variables({
+        infinite: args[:infinite] || false,
+        collection_ref: access_method,
+        max_slots: args[:max_slots] || 20,
+        baseline_weight: args[:baseline_weight] || 0,
+        stacked: args[:stacked] || false
+      })
+      
+      # if Adjective.configuration.use_active_record
+      #   raise ArgumentError, "Please provide the join table..." unless (args.key?(:data_ref) && args.key?(:item_accessor))
+      #   define_capacitable_instance_variables({
+      #     data_ref: args[:data_ref],
+      #     item_accessor: args[:item_accessor]
+      #   })
+      # end
 
       self.class.send(:attr_accessor, :collection)
       self.instance_variable_set("@collection", Array.new(self.max_slots, nil))     
 
-      self.build_simple_collection!
+      if Adjective.configuration.use_active_record
+        self.build_collection!
+      else
+        self.build_simple_collection!  
+      end
+
+      
 
       yield(self) if block_given?      
     end   
