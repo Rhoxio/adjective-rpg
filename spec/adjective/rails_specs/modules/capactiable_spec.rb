@@ -1,7 +1,9 @@
 RSpec.describe Adjective::Capacitable do
 
   describe "sandbox" do 
-    it "will sandbox for me rw" do 
+    it "will sandbox for me rw" do
+      # new_bag = Bag.new 
+      # ap new_bag.methods
       bag = Bag.create(name: "Satchel")
       item = Item.create(name: "Rock", description: "Just a rock")
 

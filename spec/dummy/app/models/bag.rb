@@ -14,6 +14,16 @@ class Bag < ApplicationRecord
     :item
   end 
 
+  def capacitable_settings
+    {
+      collection_access_method: :bag_items,
+      item_collection: :items,
+      item_accessor: :item
+    }
+  end
+
   include Adjective::Capacitable
+
+
 
 end

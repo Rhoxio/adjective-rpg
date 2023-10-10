@@ -40,41 +40,22 @@ module Adjective
     # no matter what for the AR cases.
 
     def self.included(base)
+
       if Adjective.configuration.use_active_record
         base.class_eval do 
           after_initialize do
-            # settings = {
-            #   data_ref: base.public_send(base.data_ref),
-            #   item_accessor: base.public_send(base.item_accessor)
-            # }
-            # init_capacitable(:items, settings)
             build_collection!
           end  
 
           after_find do
-            # settings = {
-            #   data_ref: base.public_send(base.data_ref),
-            #   item_accessor: base.public_send(base.item_accessor)
-            # }
-            # init_capacitable(:items, settings)
             build_collection!
           end
 
           after_update do
-            # settings = {
-            #   data_ref: base.public_send(base.data_ref),
-            #   item_accessor: base.public_send(base.item_accessor)
-            # }
-            # init_capacitable(:items, settings)
             build_collection!
           end  
 
           after_create do
-            # settings = {
-            #   data_ref: base.public_send(base.data_ref),
-            #   item_accessor: base.public_send(base.item_accessor)
-            # }
-            # init_capacitable(:items, settings)
             build_collection!
           end 
         end
@@ -86,6 +67,7 @@ module Adjective
     end
 
     def build_simple_collection!
+      # Meant to be an in-memory version - no AR hookups.
       pulled = self.public_send(collection_ref)
 
       slot_count = infinite ? pulled.length + 1 : max_slots
@@ -102,19 +84,58 @@ module Adjective
       collection
     end
 
+    def validate_active_record_dependency_methods
+      if !self.respond_to?(:capacitable_settings)
+        raise ArgumentError, "No #capacitable_settings method defined on model. Please define it and provide a :collection_access_method, :item_accessor, and :item_collection as hash keys in the return value."
+      end
+
+      if !self.capacitable_settings.key?(:collection_access_method)
+        raise ArgumentError, "Please provide a :collection_access_method key to the #capacitable_settings method to enable ActiveRecord auto-syncing. 
+        This is the getter method for the relationship that maps how items are saved in this inventory. 
+        e.g. :bag_items method (join relationship) on a Bag model that links to the things to be stored."
+      end  
+
+      if !self.capacitable_settings.key?(:item_collection)
+        raise ArgumentError, "Please provide a :item_collection to the #capacitable_settings method to enable ActiveRecord auto-syncing.
+        This is an accessor method for the items on the model.
+        e.g. Bag has_many Items through BagItems, so :items would be correct."
+      end
+      
+      if !self.capacitable_settings.key?(:item_accessor)
+        raise ArgumentError, "Please provide a :item_accessor to the #capacitable_settings method to enable ActiveRecord auto-syncing.
+        This is an accessor method for the item in the relationship modeling. 
+        e.g. Bag has_many Items through BagItems, so :item would be correct."
+      end
+
+    end
+
     def build_collection!
-      pulled = self.public_send(self.public_send(:data_ref))
+      # AR version of the build and serialization.
+      validate_active_record_dependency_methods
+      settings = self.capacitable_settings
+
+      define_capacitable_instance_variables({
+        infinite: settings[:infinite] || false,
+        collection_ref: settings[:collection_access_method],
+        max_slots: settings[:max_slots] || 20,
+        baseline_weight: settings[:baseline_weight] || 0,
+        stacked: settings[:stacked] || false,
+        item_accessor: settings[:item_accessor] || :item,
+        item_collection: settings[:item_collection] || :items,
+      })
+      set_internal_variables
+
+      pulled = self.public_send(@collection_ref)
       slot_count = infinite ? pulled.length + 1 : max_slots
       filled_array = Array.new(slot_count, nil)
 
       pulled.each_with_index do |data, index|
         position = (data.respond_to?(:position) && !data&.position.nil?) ? data.position : index
-        filled_array[position] = slot_struct.new(data.public_send(self.public_send(:item_accessor)), position, 1)
+        filled_array[position] = slot_struct.new(data.public_send(@item_accessor), position, 1)
       end
 
-      ap "running the build thing"
       self.collection = filled_array
-      ap self.collection
+      stack_items! if stacked
       collection
     end
 
@@ -296,6 +317,11 @@ module Adjective
       return {}
     end
 
+    def set_internal_variables
+      self.class.send(:attr_accessor, :collection)
+      self.instance_variable_set("@collection", Array.new(self.max_slots, nil))      
+    end
+
     def init_capacitable(access_method, args = {}, &block)
 
       define_capacitable_instance_variables({
@@ -306,24 +332,13 @@ module Adjective
         stacked: args[:stacked] || false
       })
       
-      # if Adjective.configuration.use_active_record
-      #   raise ArgumentError, "Please provide the join table..." unless (args.key?(:data_ref) && args.key?(:item_accessor))
-      #   define_capacitable_instance_variables({
-      #     data_ref: args[:data_ref],
-      #     item_accessor: args[:item_accessor]
-      #   })
-      # end
-
-      self.class.send(:attr_accessor, :collection)
-      self.instance_variable_set("@collection", Array.new(self.max_slots, nil))     
-
+      set_internal_variables
+     
       if Adjective.configuration.use_active_record
         self.build_collection!
       else
         self.build_simple_collection!  
       end
-
-      
 
       yield(self) if block_given?      
     end   
