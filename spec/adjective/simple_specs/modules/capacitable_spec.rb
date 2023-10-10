@@ -201,6 +201,23 @@ RSpec.describe Adjective::Capacitable do
     end
   end
 
+  describe "extracting" do 
+    it "will extract an item" do 
+      item_to_be_removed = bag.collection[0].item
+      expect(bag.extract(0)[0]).to eq(item_to_be_removed)
+    end
+
+    it "will not extract nils" do 
+      expect(bag.extract(19)).to eq([])
+    end
+
+    it "will extract stacks" do 
+      bag.init_capacitable(:storage, {stacked: true})
+      item_to_be_removed = bag.collection[0].item
+      expect(bag.extract(0)[0]).to eq(item_to_be_removed)
+    end
+  end
+
   describe "moving/swapping" do 
     it "will correctly move positions" do 
       rock_index = bag.collection.find_index {|struct| struct.item.name == "Rock" }
