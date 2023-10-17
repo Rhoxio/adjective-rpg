@@ -46,7 +46,11 @@ module Adjective
     end    
 
     def collection_origin
-      self.public_send(collection_ref)
+      if Adjective.configuration.use_active_record
+        self.public_send(item_collection)
+      else
+        self.public_send(collection_ref)
+      end
     end
 
     def build_simple_collection!
@@ -133,7 +137,7 @@ module Adjective
 
         main_stack.stack_size = count unless obj.nil?
         main_stack.position = main_stack&.position
-        applicable_indexes.each {|idx| collection[idx] = nil }
+        applicable_indexes.each { |idx| collection[idx] = nil }
       end
 
       return collection
@@ -192,7 +196,18 @@ module Adjective
         next if struct.nil?
         indexes.include?(struct.position)
       end
+
+      # It's currently not taking the item from the ActivRecord
+      # association. this only works for the in-memory version.
+
+      # POsition and stack size aren't getting peristed yet.
+      # This means that I need to set up that hook to save them I think...
         
+
+      if Adjective.configuration.use_active_record
+        self.public_send(item_collection).delete(*selected.map{|i|i.item.id})
+      end
+
       indexes.each {|idx| collection[idx] = nil}
       return selected.map{|struct| struct.item}
     end
@@ -238,7 +253,7 @@ module Adjective
     end
 
     def space_used
-      collection.compact.map {|item| item.stack_size }.inject(:+)
+      collection.compact.map {|item| item.stack_size }.inject(:+) || 0
     end
 
     def has_space?
