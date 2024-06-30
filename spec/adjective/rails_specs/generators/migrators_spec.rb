@@ -1,1 +1,0 @@
-require_relative '../../plain_specs/generators/migrators_spec'

@@ -1,11 +1,9 @@
-require_relative "../../lib/adjective"
+require_relative "../lib/adjective"
 require "awesome_print"
 require 'database_cleaner'
 require_relative "support/file_manager"
-require_relative '../simple_dummy/adjective'
-require "active_record"
 
-Object.send(:remove_const, :Rails) if Object.const_defined?(:Rails)
+Dir[File.dirname(__FILE__) + '/models/*.rb'].each {|file| require file }
 
 # DATABASE_NAME = 'adjective_plain_test' 
 # database_config = {

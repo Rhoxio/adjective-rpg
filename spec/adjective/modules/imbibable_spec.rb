@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 RSpec.describe Adjective::Imbibable do
 
   # Testing Defaults:
@@ -9,7 +11,7 @@ RSpec.describe Adjective::Imbibable do
 
   describe "initialization" do 
     it "will gain methods" do 
-      [:init_imbibable, :define_imbibable_instance_variables].each do |method|
+      [:init_imbibable].each do |method|
         expect(surrogate.methods.include?(method)).to eq(true)
       end
     end

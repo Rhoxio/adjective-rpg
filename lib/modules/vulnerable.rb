@@ -26,7 +26,5 @@ module Adjective
       end 
     end
 
-    include Adjective::Migratable 
-
   end
 end

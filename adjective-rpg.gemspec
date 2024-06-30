@@ -29,13 +29,12 @@ Gem::Specification.new do |spec|
   end
   spec.bindir = "exe"
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
-  spec.require_paths = ["lib", "tasks/**/*.rake", "tasks/**/*.thor"]
+  spec.require_paths = ["lib", "tasks/**/*.rake"]
 
   # Uncomment to register a new dependency of your gem
 
   # Gem Dependencies
   spec.add_dependency "rake"
-  spec.add_dependency "thor"
 
   # Dev Dependencies
   spec.add_development_dependency "activerecord"

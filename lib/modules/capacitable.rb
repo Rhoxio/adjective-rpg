@@ -1,29 +1,6 @@
 module Adjective
   module Capacitable
 
-    def self.included(base)
-
-      if Adjective.configuration.use_active_record
-        base.class_eval do 
-          after_initialize do
-            build_collection!
-          end  
-
-          after_find do
-            build_collection!
-          end
-
-          after_update do
-            build_collection!
-          end  
-
-          after_create do
-            build_collection!
-          end 
-        end
-      end
-    end
-
     def init_capacitable(access_method, args = {}, &block)
 
       define_capacitable_instance_variables({
@@ -35,26 +12,17 @@ module Adjective
       })
       
       set_internal_variables
-     
-      if Adjective.configuration.use_active_record
-        self.build_collection!
-      else
-        self.build_simple_collection!  
-      end
+
+      self.build_collection!
 
       yield(self) if block_given?      
     end    
 
     def collection_origin
-      if Adjective.configuration.use_active_record
-        self.public_send(item_collection)
-      else
-        self.public_send(collection_ref)
-      end
+      self.public_send(collection_ref)
     end
 
-    def build_simple_collection!
-      # Meant to be an in-memory version - no AR hookups.
+    def build_collection!
       pulled = self.public_send(collection_ref)
 
       slot_count = infinite ? pulled.length + 1 : max_slots
@@ -67,37 +35,6 @@ module Adjective
 
       self.collection = filled_array
 
-      stack_items! if stacked
-      collection
-    end
-
-    def build_collection!
-      # AR version of the build and serialization.
-      validate_active_record_dependency_methods
-      settings = self.capacitable_settings
-
-      define_capacitable_instance_variables({
-        infinite: settings[:infinite] || false,
-        collection_ref: settings[:collection_access_method],
-        max_slots: settings[:max_slots] || 20,
-        baseline_weight: settings[:baseline_weight] || 0,
-        stacked: settings[:stacked] || false,
-        item_accessor: settings[:item_accessor] || :item,
-        item_collection: settings[:item_collection] || :items,
-      })
-      set_internal_variables
-
-      pulled = self.public_send(collection_ref)
-      slot_count = infinite ? pulled.length + 1 : max_slots
-      filled_array = Array.new(slot_count, nil)
-
-      pulled.each_with_index do |data, index|
-        position = (data.respond_to?(:position) && !data&.position.nil?) ? data.position : index
-        stack_size = (data.respond_to?(:stack_size) && !data&.stack_size.nil?) ? data.stack_size : 1
-        filled_array[position] = slot_struct.new(data.public_send(item_accessor), position, stack_size)
-      end
-
-      self.collection = filled_array
       stack_items! if stacked
       collection
     end
@@ -116,14 +53,6 @@ module Adjective
 
         count = targeted_structs.sum { |struct| struct.stack_size || 1 }
         main_stack = find_by_item(obj)
-        # I feel like an error should be thrown here if the position is nil instead of 
-        # safe-operator checking it. If I don't, the last step can mess it all up and
-        # set a nil position which isn't an expectation anywhere except for on
-        # the initial build... and even then it's not a default. It comes from a reliable
-        # source... the indexes of the array or the position itself. It's not guarnanteed to
-        # be correct coming out of their db though...
-        # I guess this makes sense as a check
-        # against tampering on the collection from the outside?
         exempted_indexes = [main_stack&.position]
 
         targeted_structs.each do |struct|
@@ -280,44 +209,11 @@ module Adjective
       end.compact
     end
 
-    # INTERNALS
-
-    def self.default_data
-      warn("Capacitable uses array references and given association accessor methods instead of static attributes. You will need to define table values manually in your migrations.")
-      return {}
-    end  
-
     def capacitable_strategies
       Adjective.registered_procs[:capacitable]
     end 
 
-    # PRIVATE METHODS
     private
-
-    def validate_active_record_dependency_methods
-      if !self.respond_to?(:capacitable_settings)
-        raise NoMethodError, "No #capacitable_settings method defined on model. Please define it and provide a :collection_access_method, :item_accessor, and :item_collection as hash keys in the return value."
-      end
-
-      if !self.capacitable_settings.key?(:collection_access_method)
-        raise ArgumentError, "Please provide a :collection_access_method key to the #capacitable_settings method to enable ActiveRecord auto-syncing. 
-        This is the getter method for the relationship that maps how items are saved in this inventory. 
-        e.g. :bag_items method (join relationship) on a Bag model that links to the things to be stored."
-      end  
-
-      if !self.capacitable_settings.key?(:item_collection)
-        raise ArgumentError, "Please provide a :item_collection to the #capacitable_settings method to enable ActiveRecord auto-syncing.
-        This is an accessor method for the items on the model.
-        e.g. Bag has_many Items through BagItems, so :items would be correct."
-      end
-      
-      if !self.capacitable_settings.key?(:item_accessor)
-        raise ArgumentError, "Please provide a :item_accessor to the #capacitable_settings method to enable ActiveRecord auto-syncing.
-        This is an accessor method for the item in the relationship modeling. 
-        e.g. Bag has_many Items through BagItems, so :item would be correct."
-      end
-
-    end    
 
     def define_capacitable_instance_variables(args)
       args.each do |key, value|
