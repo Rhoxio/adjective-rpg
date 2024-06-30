@@ -5,16 +5,11 @@ require "active_record"
 require 'awesome_print'
 
 require_relative "procs/capacitable_procs"
-require_relative "modules/internal/migratable"
-require_relative "modules/internal/ivar_settable"
 require_relative "modules/vulnerable"
 require_relative "modules/imbibable"
 require_relative "modules/resourcable"
 require_relative "modules/capacitable"
 require_relative "utils/string_patches"
-require_relative "templates/add_columns_migration"
-require_relative "templates/create_table_migration"
-require_relative "templates/create_adjective_class"
 
 RAILS_DEFAULT_LOAD_PATH = 'config/environment'
 ADJECTIVE_DEFAULT_CONFIG_PATH = "config/initializers/adjective"

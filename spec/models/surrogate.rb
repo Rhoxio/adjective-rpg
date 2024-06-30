@@ -1,4 +1,4 @@
-require_relative "../adjective"
+require_relative "../simple_dummy/adjective"
 class Surrogate
   include Adjective::Imbibable
 

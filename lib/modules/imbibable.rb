@@ -62,9 +62,7 @@ module Adjective
     # INTERNALS
     
     def init_imbibable(args = {}, &block)
-      if !Adjective.configuration.use_active_record
-        define_imbibable_instance_variables(Adjective::Imbibable.default_data)
-      end
+      define_imbibable_instance_variables(Adjective::Imbibable.default_data)
 
       @experience_table = args[:experience_table] || Adjective.experience_table
       @suppress_level_up = args[:suppress_level_up] || false
@@ -73,12 +71,8 @@ module Adjective
       self.class.send(:attr_accessor, :experience_table)
       self.class.send(:attr_accessor, :suppress_level_up)
 
-      if defined?(Rails) && Adjective.configuration.use_rails
-        self.class.send(:alias_attribute, :experience, :total_experience)
-      else
-        self.class.send(:alias_method, :experience, :total_experience)
-        self.class.send(:alias_method, :experience=, :total_experience=)
-      end
+      self.class.send(:alias_method, :experience, :total_experience)
+      self.class.send(:alias_method, :experience=, :total_experience=)
 
       yield(self) if block_given?
     end
@@ -90,6 +84,8 @@ module Adjective
       }
     end
 
+    private
+
     def define_imbibable_instance_variables(args)
       args.each do |key, value|
         self.class.send(:attr_accessor, key)
@@ -97,7 +93,5 @@ module Adjective
       end 
     end
 
-    include Adjective::Migratable   
-    # include Adjective::IvarSettable    
   end
 end

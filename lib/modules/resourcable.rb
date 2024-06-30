@@ -93,32 +93,19 @@ module Adjective
     # INTERNALS
 
     def init_resourcable(args = {}, &block)
-      if !Adjective.configuration.use_active_record
-        define_resourcable_instance_variables(Adjective::Resourcable.default_data)
-      end
+      define_resourcable_instance_variables(Adjective::Resourcable.default_data)
 
       self.class.send(:alias_method, :add, :adjust)
       self.class.send(:alias_method, :add_percent, :adjust_percent)
 
-      if defined?(Rails) && Adjective.configuration.use_rails
-        self.class.send(:alias_attribute, :value, :current_value)
-        self.class.send(:alias_attribute, :value=, :current_value=)
+      self.class.send(:alias_method, :value, :current_value)
+      self.class.send(:alias_method, :value=, :current_value=)
 
-        self.class.send(:alias_attribute, :maximum, :max_value)
-        self.class.send(:alias_attribute, :maximum=, :max_value=)
+      self.class.send(:alias_method, :maximum, :max_value)
+      self.class.send(:alias_method, :maximum=, :max_value=)
 
-        self.class.send(:alias_attribute, :minimum, :min_value)
-        self.class.send(:alias_attribute, :minimum=, :min_value=)
-      else
-        self.class.send(:alias_method, :value, :current_value)
-        self.class.send(:alias_method, :value=, :current_value=)
-
-        self.class.send(:alias_method, :maximum, :max_value)
-        self.class.send(:alias_method, :maximum=, :max_value=)
-        
-        self.class.send(:alias_method, :minimum, :min_value)
-        self.class.send(:alias_method, :minimum=, :min_value=)
-      end
+      self.class.send(:alias_method, :minimum, :min_value)
+      self.class.send(:alias_method, :minimum=, :min_value=)
 
       yield(self) if block_given?
     end
@@ -136,8 +123,7 @@ module Adjective
         self.class.send(:attr_accessor, key)
         self.instance_variable_set("@#{key.to_s}", value)
       end 
-    end 
+    end
 
-    include Adjective::Migratable    
   end
 end
