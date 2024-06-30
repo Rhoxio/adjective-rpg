@@ -16,6 +16,7 @@ module Adjective
         hitpoints: 1,
         max_hitpoints: 10
       }
+      
     end
 
     def define_vulnerable_instance_variables(args)
