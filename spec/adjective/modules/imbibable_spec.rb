@@ -2,8 +2,9 @@ require 'spec_helper'
 
 RSpec.describe Adjective::Imbibable do
 
-  # Testing Defaults:
-  # [0, 100, 200, 400, 800, 1600, 3200, 6400, 12800]
+  before do
+    Adjective.experience_table = [0, 100, 200, 400, 800, 1600, 3200, 6400, 12800]
+  end
 
   let(:surrogate){
     Surrogate.new

@@ -126,17 +126,6 @@ module Adjective
         indexes.include?(struct.position)
       end
 
-      # It's currently not taking the item from the ActivRecord
-      # association. this only works for the in-memory version.
-
-      # POsition and stack size aren't getting peristed yet.
-      # This means that I need to set up that hook to save them I think...
-        
-
-      if Adjective.configuration.use_active_record
-        self.public_send(item_collection).delete(*selected.map{|i|i.item.id})
-      end
-
       indexes.each {|idx| collection[idx] = nil}
       return selected.map{|struct| struct.item}
     end

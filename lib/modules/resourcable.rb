@@ -50,17 +50,8 @@ module Adjective
       return current_value
     end
 
-    # Not the cleanest/dryest, but otherwise I have to do some funky 
-    # symbol passing stuff and Ruby method chaining.
-    # This works and is relatively simple. 
     def subtract(value, opts = {})
-      overflow = opts[:overflow] || false
-      underflow = opts[:underflow] || false
-      self.current_value -= value
-      normalize_min! if overflow
-      normalize_max! if underflow
-      normalize! unless (overflow || underflow)
-      return current_value
+      adjust(-value, opts)
     end 
 
     # Percent operations optimistically round to maintain integer status.
@@ -94,19 +85,7 @@ module Adjective
 
     def init_resourcable(args = {}, &block)
       define_resourcable_instance_variables(Adjective::Resourcable.default_data)
-
-      self.class.send(:alias_method, :add, :adjust)
-      self.class.send(:alias_method, :add_percent, :adjust_percent)
-
-      self.class.send(:alias_method, :value, :current_value)
-      self.class.send(:alias_method, :value=, :current_value=)
-
-      self.class.send(:alias_method, :maximum, :max_value)
-      self.class.send(:alias_method, :maximum=, :max_value=)
-
-      self.class.send(:alias_method, :minimum, :min_value)
-      self.class.send(:alias_method, :minimum=, :min_value=)
-
+      define_aliases unless args[:suppress_aliases]
       yield(self) if block_given?
     end
 
@@ -123,6 +102,22 @@ module Adjective
         self.class.send(:attr_accessor, key)
         self.instance_variable_set("@#{key.to_s}", value)
       end 
+    end
+
+    private
+
+    def define_aliases
+      self.class.send(:alias_method, :add, :adjust)
+      self.class.send(:alias_method, :add_percent, :adjust_percent)
+
+      self.class.send(:alias_method, :value, :current_value)
+      self.class.send(:alias_method, :value=, :current_value=)
+
+      self.class.send(:alias_method, :maximum, :max_value)
+      self.class.send(:alias_method, :maximum=, :max_value=)
+
+      self.class.send(:alias_method, :minimum, :min_value)
+      self.class.send(:alias_method, :minimum=, :min_value=)
     end
 
   end

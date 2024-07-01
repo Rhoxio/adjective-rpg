@@ -22,6 +22,20 @@ RSpec.describe Adjective::Resourcable do
       expect(mana.max_value).to eq(mana.maximum)
       expect(mana.min_value).to eq(mana.minimum)
     end
+
+    it "will suppress the aliases if prompted to" do
+      class Energy
+        include Adjective::Resourcable
+
+        def initialize
+          init_resourcable({suppress_aliases: true})
+        end
+      end
+
+      energy = Energy.new
+      expect(energy.respond_to?(:add)).to eq(false)
+
+    end
   end
 
   describe "methods" do 

@@ -1,14 +1,16 @@
 module Adjective
   module Vulnerable
 
+    # It should essentially assign hitpoints automatically and track them with Resourcable
+    # This is going to have to process based on an internal var
+    # because the Resourcable isn't aupposed to be here - it should be a base class that simply consumes
+    # the functionality I think....
+
     VULNERABLE_ATTRIBUTES = [:hitpoints, :max_hitpoints]
 
     def init_vulnerable(args = {}, &block)
-      if !Adjective.configuration.use_active_record
-        define_vulnerable_instance_variables(vulnerable_default_data)
-      end
+      define_vulnerable_instance_variables(vulnerable_default_data)
       yield(self) if block_given?
-      # validate_vulnerable_attributes(args)
     end
 
     def self.default_data

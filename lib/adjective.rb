@@ -9,21 +9,14 @@ require_relative "modules/vulnerable"
 require_relative "modules/imbibable"
 require_relative "modules/resourcable"
 require_relative "modules/capacitable"
+require_relative "modules/vulnerable"
+require_relative "models/hitpoints"
 require_relative "utils/string_patches"
 
 RAILS_DEFAULT_LOAD_PATH = 'config/environment'
 ADJECTIVE_DEFAULT_CONFIG_PATH = "config/initializers/adjective"
 
 module Adjective
-
-  if defined?(Rails)
-    # require 'railties' 
-    # require_relative "railties"
-    # require_relative "generators/setup_generator"
-    # ActiveSupport.on_load(:active_record) do
-    #   extend Adjective::Models
-    # end    
-  end
 
   class Error < StandardError; end
 

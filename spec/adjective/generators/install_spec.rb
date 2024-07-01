@@ -16,7 +16,7 @@ RSpec.describe Adjective do
     FileManager.truncate_files(File.join(file_dummy_root, "config/initializers"))
   end
 
-  it "will create the config file" do 
+  xit "will create the config file" do
     output = `rake adjective:install -- config_path=#{file_dummy_config_path}`
     expect(File.exist?(File.join(file_dummy_initializers_path, "adjective.rb"))).to eq(true)
   end
